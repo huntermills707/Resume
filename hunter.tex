@@ -1,0 +1,136 @@
+%----------------------------------------------------------------------------------------
+% Resume by Hunter Mills
+% Version 1.0 (7/18/2017)
+%
+% MIT license
+%
+% Compiled using xelatex
+% Custom fonts in fonts folder
+%----------------------------------------------------------------------------------------
+
+\documentclass[letterpaper]{hunter}
+\usepackage[hmargin=1.5cm, vmargin=1cm]{geometry}
+
+\begin{document}
+	\pagestyle{empty}
+	
+	% Header
+	\firstname{Hunter}
+	\lastname{Mills}
+	\summary{Graduate student at the Institute of Computational and Mathematical Engineering at Stanford University interested in scientific computing, modeling, and visualization}
+	\headersplit{.55\paperwidth} % Spacing between Name and Summary
+	\headerspace{.75cm} % Spacing from top of page
+	\makeHeader
+	
+	% Symbol followed by foreward slash followd by text. Comma separates entries
+	\infoSection{
+		\email/huntermills707@gmail.com,
+		\phone/1-707-799-1896,
+		\linkedin/hunter-mills-874753a6,
+		\location/Sebastopol CA
+	}{2.5em} % Spacing between entries
+
+	% Left Column	
+	\noindent
+	\begin{minipage}[t]{0.33\textwidth} % The left column takes up 33% of the text width of the page
+		\section{Skills}
+		
+		% Title followed by items followed byrankings (rankings are from 1-5)
+		\radarChart{Programming}{C,C++,Julia,\LaTeX,Mathe-\\matica,MatLAB,\quad Python,R}{5,4,4,3,4,2.5,4.5,3}{.29}
+		\vspace{.5em}
+		\radarChart{Parallelization}{Blaze, Cuda, MPI, OpenACC, OpenCL, \quad OpenMP,Pthreads}{3,3.5,4,2,5,3.5,2}{.29}
+		\vspace{.5em}
+		\radarChart{Visualization}{Bokeh, matplotlib,\quad MayaVi, OpenGL, tikz, VTK}{3.5,3.5,2,2,3,2}{.29}
+		
+		\section{Languages}
+		\begin{circChartArray}{3} % Number of Columns
+			\circChartEntry{English}{3} % Entry title followed by ranking (from 1-3)
+			\circChartEntry{Spanish}{1}
+			\circChartEntry{Swedish}{1}
+		\end{circChartArray}
+		
+		\vspace{.3em}
+		\section{Professional Development}
+		% First entry left aligned, second right aligned,
+		\entryItemTwo{edx/ColumbiaX}{2017}
+		\begin{entryList}{1}
+			\item Artificial Intelligence
+			\item Machine Learning
+		\end{entryList}
+		
+	\end{minipage}
+	\hfill % Fill gaps between left and right columns
+	% Right Column
+	\begin{minipage}[t]{0.66\textwidth} % The right column takes up 66% of the text width of the page
+		\section{Education}
+			
+		% First enty let aligned, second left aligned,
+		% third second line left aligned, fourth second line right aligned
+		\entryItem{MS Computational amd Mathematical Engineering}{2015 - 2018}{Stanford University}{Stanford CA}
+		\subline{GPA: 3.34, Departmental Fellowship}
+		\vspace{1.25em}
+		\begin{entryList}{2} % Number of columns
+			\item Numerical Linear Algebra
+			\item Data Mining
+			\item Algorithms
+			\item Convex Optimization
+			\item Scientific Computing
+			\item Stochastic Processes
+		\end{entryList}
+		
+		\entryItem{BS Physics/ BA Mathematics}{2012 - 2014}{Sonoma State University}{Rohnert Park CA}
+		\subline{GPA: 3.89, Distinction in Physics}
+		\begin{entryList}{2}
+			\item Quantum Mechanics
+			\item Statistical Mechanics
+			\item Semiconductor Theory
+			\item Electricity and Magnetism
+			\item Numerical Analysis
+			\item Linear Systems Theory
+		\end{entryList}
+		
+		\entryItem{AS Mathematics}{2007 - 2011}{Santa Rosa Junior College}{Santa Rosa CA}
+		\subline{Doyle Scholoarship}
+		\vspace{-.7em}
+		
+		\section{Experience}
+		\entryItem{Embedded Systems Engineer}{2014 - Present}{Sonoma State University Education and Public Outreach}{Rohnert Park CA}
+		\begin{entryList}{1}
+			\item Designed microcontroller networks for environmental sensing in Logo. 
+			\item Debugged radio based microntroller communications.
+			\item Created SPI, I2C, UART, and PWM comunication libraries in Logo. 
+			\item Built transmission based spectrometer.
+			\item Implemented Si1145 IR/Visible/UV sensor for NDVI measurements.  
+			\item Integrated SD card based memory system for small satellites.
+		\end{entryList}
+		
+		\section{Research}
+		\entryItem{3D Image Reconstruction using Coded Apertures}{2014}{Sonoma State University}{Rohnert Park CA}
+		\begin{entryList}{1}
+			\item Created image reconstruction method Monte Carlo back-projections
+			\item Built cadmium zinc telluride x-ray detector system
+			\item \emphfont{\color{lightgray}Won Best Research at Sonoma State's Science Symposium}
+		\end{entryList}
+		
+		\entryItem{T-LogoQube: 3P Satellite}{2013}{Sonoma State University}{Rohnert Park CA}
+		\begin{entryList}{1}
+			\item Built/designed 15cm x 5cm x 5cm satellite 
+			\item On-board magnetometer and torquing coils 
+			\item Launched November 21, 2013 into a polar, sun synchronous 634km orbit
+		\end{entryList}
+		
+		\entryItem{Digital Control for PHI Auger Specrtrometer}{2012 - 2013}{Sonoma State University}{Rohnert Park CA}
+		\begin{entryList}{1}
+			\item Bypassed analog controls with Arduino based digital control system
+			\item Allowed remote control and more precise control.
+			\item {\emphfont \color{lightgray} Fully funded through Newkirk Student Assistantship}
+		\end{entryList}	
+		
+		\section{Volunteering}
+		\entryItem{Volunteer Firefighter}{2017-Present}{Sebastopol Fire Department}{Sebastopol CA}
+		\begin{entryList}{1}
+			\item First Responder and Basic Life Support
+			\item Fire Suppression/Rescue
+		\end{entryList}	
+	\end{minipage}
+\end{document}
