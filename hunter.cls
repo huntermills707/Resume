@@ -1,157 +1,197 @@
 %----------------------------------------------------------------------------------------
+%	MODERN RESUME / CV CLASS
+%
+%	Originally "hunter.cls" by Hunter Mills (v1.0, 2017) - MIT License.
+%	Adapted into a reusable, Overleaf-ready template:
+%	  * Renamed the class to the generic name "resume".
+%	  * Replaced the custom (non-Overleaf) fonts with TeX Gyre fonts that ship
+%	    with every TeX Live / Overleaf install (see FONT CONFIGURATION below).
+%	  * Single-column, text-only layout (no radar/circle charts), with a
+%	    \skill{} row command and a BibLaTeX publications section.
+%
+%	Compile with XeLaTeX (and biber, for the publications list).
+%----------------------------------------------------------------------------------------
+
+%----------------------------------------------------------------------------------------
 %	CLASS OPTIONS AND REQUIRED PACKAGES
 %----------------------------------------------------------------------------------------
 
-\ProvidesClass{hunter}[2014/04/30 CV class]
+\ProvidesClass{resume}[2026/05/23 Modern resume class]
 \NeedsTeXFormat{LaTeX2e}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions\relax
 \LoadClass{article}
 
-
-% Radar Charts
-\RequirePackage[]{inputenc} 
+% Encoding / colours
+\RequirePackage[]{inputenc}
 \RequirePackage[T1]{fontenc}
-\RequirePackage[upright]{fourier} 
 \RequirePackage[usenames,dvipsnames]{xcolor}
-\RequirePackage{tkz-kiviat,numprint,fullpage} 
-\usetikzlibrary{arrows}
 
 % Custom Sections
 \RequirePackage{titlesec}
 
-% Header and circle charts
+% TikZ (used to position the header banner)
 \RequirePackage{tikz}
 \RequirePackage[none]{hyphenat}
 \RequirePackage{fontawesome}
 \RequirePackage{multicol}
 \RequirePackage{float}
 
-% Math Stuff
+% Math / programming helpers
 \RequirePackage{ifthen}
 \RequirePackage{pgffor}
 \RequirePackage{calc}
 \newlength{\mylength}
+\newlength{\@colw}
 
-% Font Settings
+%========================================================================
+%	FONT CONFIGURATION  (compile with XeLaTeX)
+%
+%	Two font setups are provided.
+%
+%	OPTION A (active, default): TeX Gyre fonts. These ship with every
+%	  TeX Live / Overleaf installation, so the template compiles with no
+%	  extra files. Just set the Overleaf compiler to "XeLaTeX".
+%
+%	OPTION B: the original custom fonts (Vegur + Portland LDO). These are
+%	  NOT installed on Overleaf. To use them, upload the .otf/.ttf files
+%	  into a "fonts/" folder in your project, then comment out Option A
+%	  and uncomment Option B.
+%========================================================================
 \RequirePackage{unicode-math}
-\newfontfamily\bodyfont[]{Portland LDO}
-\newfontfamily\thinfont[]{Vegur Light}
-\newfontfamily\headingfont[]{Vegur}
-\newfontfamily\emphfont[]{Portland LDO Italic}
+
+% ---- OPTION A: Overleaf-ready fonts (active) ----------------------------
+\newfontfamily\bodyfont{EB Garamond}
+\newfontfamily\thinfont{Inter Thin}
+\newfontfamily\headingfont{Inter Regular}
+\newcommand{\emphfont}{\bodyfont\itshape}
+\newcommand{\mainfont}{\bodyfont}
 \defaultfontfeatures{Mapping=tex-text}
-\setmainfont[Mapping=tex-text, Color=gray]{Portland LDO}
-\definecolor{darkgray}{HTML}{333333}
-\definecolor{lightgray}{HTML}{999999}
+\setmainfont[Mapping=tex-text, Color=000000]{Cormorant Garamond}
+
+% ---- OPTION B: original custom fonts (needs uploaded font files) --------
+%\newfontfamily\bodyfont[]{Portland LDO}
+%\newfontfamily\thinfont[]{Vegur-Light}
+%\newfontfamily\headingfont[]{Vegur-Regular}
+%\newfontfamily\emphfont[]{Portland LDO Italic}
+%\newcommand{\mainfont}{\bodyfont}
+%\defaultfontfeatures{Mapping=tex-text}
+%\setmainfont[Mapping=tex-text, Color=gray]{Portland LDO}
+%-------------------------------------------------------------------------
+
+\definecolor{darkgray}{HTML}{000000}
+\definecolor{gray}{HTML}{000000}
+\definecolor{lightgray}{HTML}{000000}
+
 
 
 %----------------------------------------------------------------------------------------
 %	Header
 %
-% firstname: First name for header
-% lastname: Last name for header
-% summary: Brief summary for header right of name
-% headersplit: spaceing between name and summary
-% headerspace: spacing from top of page
-% makeHeader: makes the header
-%
-% infoSection: 2 inputs. Bar for contact info
-%    1: icon followed by "/" and the information separated by commas
-%    2: spacing between items
+% firstname / lastname : name shown on the left of the header
+% info                 : contact entries shown as a grid on the right of the name.
+%                        Format: \icon/text , separated by commas. A value that
+%                        contains a comma must be braced, e.g. \location/{City, ST}.
+% infocols             : number of columns for the contact grid (default 2). The
+%                        grid uses as many rows as needed to fit all entries.
+% summary              : short blurb shown in the lined bar below the header
+% headerspace          : spacing from the top of the page
+% makeHeader           : draws the whole header (name + info grid + summary bar)
 %----------------------------------------------------------------------------------------
 
 \newcommand*{\firstname}[1]{\def\@firstname{#1}}
 \newcommand*{\lastname}[1]{\def\@lastname{#1}}
 \newcommand*{\summary}[1]{\def\@summary{#1}}
 \newcommand*{\info}[1]{\def\@info{#1}}
+\newcommand*{\infocols}[1]{\def\@infocols{#1}}
 \newcommand*{\headersplit}[1]{\def\@headersplit{#1}}
 \newcommand*{\headerspace}[1]{\def\@headerspace{#1}}
 
+% sensible defaults (so the header still works if a field is omitted)
+\def\@info{}
+\def\@infocols{2}
+\def\@summary{}
+
 \newcommand{\makeHeader}[0]{
 	\begin{tikzpicture}[remember picture,overlay]
-		\node [rectangle, anchor=north, minimum width=\textwidth, minimum height=\@headerspace] (top) at (current page.north){};		    
-		\node [rectangle, anchor=north, minimum width=\textwidth, minimum height=2.5cm] (box) at (top.south){};			
-		\node [rectangle, anchor=center, minimum width=.5\textwidth, minimum height=2.75cm] (textAlign) at (box.center){};			
+		\node [rectangle, anchor=north, minimum width=\textwidth, minimum height=\@headerspace] (top) at (current page.north){};
+		\node [rectangle, anchor=north, minimum width=\textwidth, minimum height=2.5cm] (box) at (top.south){};
+		\node [rectangle, anchor=center, minimum width=.5\textwidth, minimum height=2.75cm] (textAlign) at (box.center){};
+
+		% Name (left)
 		\node [rectangle, anchor=west] (name) at (box.west) {%
-			\fontsize{40pt}{72pt}\color{darkgray}%
-			{\thinfont \@firstname }{\headingfont \@lastname}
-		};
-			
-		\node [rectangle, text width=\@headersplit, anchor=east] at (box.east) {%
-			\fontsize{12pt}{4pt}\color{lightgray}
-			\begin{minipage}{\@headersplit}
-			    \vspace{.5em}
-			    \headingfont \raggedleft \@summary
-			\end{minipage}
+            \raisebox{1em}{
+			\fontsize{48pt}{48pt}\color{darkgray}%
+			{\thinfont \@firstname }{\headingfont \@lastname}}
 		};
 
+		% Contact info grid (right) -- \@infocols columns, as many rows as needed
+		\node [rectangle, anchor=east] (info) at (box.east) {%
+			\setlength{\@colw}{\dimexpr.53\textwidth/\@infocols\relax}%
+			\begin{minipage}{.55\textwidth}
+				\raggedleft\fontsize{10pt}{16pt}\headingfont
+				\foreach \x/\y [count=\@ic] in \@info{%
+					\ifnum\@ic>1\relax
+						\pgfmathtruncatemacro{\@imod}{mod(\@ic-1,\@infocols)}%
+						\ifnum\@imod=0\relax\\\fi
+					\fi
+					\makebox[\@colw][r]{%
+						{\color{darkgray}\raisebox{-.25em}{\fontsize{15pt}{12pt}\selectfont\x}}%
+						\hspace{.45em}{\color{lightgray}\y}}%
+				}%
+			\end{minipage}
+		};
 	\end{tikzpicture}
+	% Drop below the header box, then the summary bar in normal flow so the
+	% body always sits beneath it (no overlap, whatever the summary length).
+	% The 1.5cm = header box height (2.5cm) minus the top page margin (1cm);
+	% adjust if you change vmargin.
+	\vspace*{\dimexpr\@headerspace+.5em\relax}
+	\par\noindent{\color{darkgray}\rule{\textwidth}{.4pt}}
+	{\fontsize{11pt}{11pt}\bodyfont\color{lightgray}\@summary\par}
+	\vspace{.25em}
 }
-		
-\newcommand{\infoSection}[2]{
 
-	\begin{tikzpicture}[remember picture,overlay]
-		\node[rectangle, anchor=center, minimum height = .5cm] (data) at (box.south) {			
-			\begin{minipage}{\textwidth}
-			\centering
-			\headingfont
-			\foreach \x/\y in {#1} {
-				\color{darkgray} \raisebox{-.5ex}{\fontsize{16pt}{20pt}\x} \hspace{.3em}\color{lightgray} \y \hspace{#2} 
-			}
-			\hspace{-#2} 
-			\end{minipage}
-		};
-		\draw [darkgray] (data.south east) -- (data.south west);
-		\draw [darkgray] (data.north east) -- (data.north west);
-	\end{tikzpicture}
-	\vspace{1cm}
-	\vspace{\@headerspace}
-}	
-
-% Custom Symbols
+% Contact-bar icons (FontAwesome)
 \newcommand{\phone}{\faPhone}
 \newcommand{\email}{\faEnvelope}
-\newcommand{\location}{\faMapMarker}	
+\newcommand{\location}{\faMapMarker}
 \newcommand{\facebook}{\faFacebook}
-\newcommand{\linkedin}{\faLinkedin}		
+\newcommand{\linkedin}{\faLinkedin}
 \newcommand{\github}{\faGithub}
 \newcommand{\googleplus}{\faGooglePlus}
 \newcommand{\website}{\faExternalLink}
 \newcommand{\dropbox}{\faDropbox}
 \newcommand{\skype}{\faSkype}
 \newcommand{\bitbucket}{\faBitbucket}
+
 %----------------------------------------------------------------------------------------
 %	Section titles
-%
-% remove default spacing, remove section numbers, switch to fonts, and add line
 %----------------------------------------------------------------------------------------
 \titlespacing{\section}{0pt}{0pt}{0pt}
 \titleformat{\section}{
-	\vspace{-.4em}
-	\fontsize{16pt}{20pt}\headingfont \raggedright\color{darkgray}}{}{.035\textwidth}{}[
-        \vspace{-1em}\color{darkgray}\underline{\hspace{\textwidth}}
+    \vspace{2pt}
+	\fontsize{16pt}{2pt}\headingfont \raggedright\color{darkgray}}{}{0pt}{}[
+        \color{darkgray}\underline{\hspace{\textwidth}}
     ]
 
 %----------------------------------------------------------------------------------------
-%	List enviorment
+%	List environment
 %
-% entryItem: 4 inputs for info. each is separated into 2 columns and rows. Each item
-%    is aligned to the neatest horizontal margin.
-%
-% entryItemTwo: Same as entryItem, but with 2 pieces of info vs 4.
-%
-% subline: 1 input for info that is left aligned, but adds spacing to accomidate for
-%    spacing in the entry item words.
-%
-% entryList: List enviorment to contain details for each entryitem (\item for entries)
+% entryItem    : 4 arguments (title, dates, sub-title, location) laid out in two
+%                rows, the right-hand item flush to the margin.
+% entryItemTwo : same idea, but only 2 arguments (title + dates).
+% subline      : one left-aligned line, indented to match the entry items.
+% entryList    : bullet list for the details under an entry (\item per bullet);
+%                the argument is the number of columns.
 %----------------------------------------------------------------------------------------
 \setlength{\tabcolsep}{0pt}
 \newcommand{\entryItem}[4]{
 	\setlength{\mylength}{\textwidth-0.45cm}
-	
+
 	\def\@tableWidth{\textwidth}
 	\def\@rightColWidth{\mylength}
-	
+
 	\color{darkgray}
 	\noindent\begin{tabular*}{\@tableWidth}{@{\extracolsep{\fill}}ll}
 		\parbox[t]{.45cm}{\faSquare} & \parbox[t]{\@rightColWidth}{%
@@ -166,11 +206,12 @@
 }
 
 \newcommand{\entryItemTwo}[2]{
+    \vspace{-.25em}
 	\setlength{\mylength}{\textwidth-0.45cm}
-	
+
 	\def\@tableWidth{\textwidth}
 	\def\@rightColWidth{\mylength}
-	
+
 	\color{darkgray}
 	\noindent\begin{tabular*}{\@tableWidth}{@{\extracolsep{\fill}}ll}
 		\parbox[t]{.45cm}{\faSquare} & \parbox[t]{\@rightColWidth}{
@@ -179,7 +220,25 @@
 			\bodyfont{#2}}
 	\end{tabular*}
 	\renewcommand{\bfseries}{\mainfont\color{gray}}
-	\vspace{-.5em}
+	\vspace{-.7em}
+}
+
+\newcommand{\entryItemThree}[3]{
+    \vspace{-.25em}
+	\setlength{\mylength}{\textwidth-0.45cm}
+
+	\def\@tableWidth{\textwidth}
+	\def\@rightColWidth{\mylength}
+
+	\color{darkgray}
+	\noindent\begin{tabular*}{\@tableWidth}{@{\extracolsep{\fill}}ll}
+		\parbox[t]{.45cm}{\faSquare} & \parbox[t]{\@rightColWidth}{
+			\headingfont{#1} \bodyfont{- #2}
+			\hfill
+			\bodyfont{#3}}
+	\end{tabular*}
+	\renewcommand{\bfseries}{\mainfont\color{gray}}
+	\vspace{-.7em}
 }
 
 \newenvironment{entryList}[1]{
@@ -210,80 +269,77 @@
 			{#1}
 			\vspace{1.75em}}
 	\end{tabular*}
-	
 }
 
 %----------------------------------------------------------------------------------------
-%	Radar Charts
+%	Skill / info row  (text, no charts)
 %
-% 4 inputs
-%    1: Title for chart
-%    2: List of skills sepatated by commas
-%    3: Rankings for each skill (0-5) separated by commas
-%    4: Scale for the chart
-%----------------------------------------------------------------------------------------
-\newcommand{\radarChart}[4]{
-	\vspace{-1em}
-	\begin{figure}[H]
-		\centering
-		{\fontsize{14pt}{20pt}\headingfont #1 }\par
-		\begin{tikzpicture}
-		\tkzKiviatDiagram[scale= #4,
-		radial style/.style ={lightgray},
-		lattice style/.style ={lightgray},
-		rotate=90,
-		radial  = 5,
-		label space = 1.5,
-		gap     = 1,  
-		lattice = 5]{#2}
-		\tkzKiviatLine[thick,color=gray,mark=none,
-		fill=gray!75,opacity=.5](#3)
-		\end{tikzpicture}
-	\end{figure}
-	\vspace{-1em}
-}
-
-%----------------------------------------------------------------------------------------
-%	Circle Charts
-%
-% circChartArray: 1 input to determine number of columns for the charts
-% 
-% circChartEntry: 2 inputs
-%    1: Name of Skill
-%    2: Ranking of Skill (0-3)
+% \skill{Label}{comma, separated, items}
+%    Prints a left-aligned label with the items beside it, e.g.
+%    \skill{Programming}{Python, SQL, C++}
 %----------------------------------------------------------------------------------------
 
-\newenvironment{circChartArray}[1]{
-	
-	\vspace{-.5em}
-	\ifnum#1>1
-		\def\@onecol{1}
-	\fi
-	\ifdefined\@onecol
-		\begin{multicols}{#1}
-			\else
-			\vspace{-.25em}
-			\fi
-			
-			}{%
-		
-	\ifdefined\@onecol
-		\end{multicols}
-	\fi
-	\vspace{-.75em}
+\newcommand{\skill}[2]{
+	\setlength{\mylength}{\textwidth-0.45cm}
+
+	\def\@tableWidth{\textwidth}
+	\def\@rightColWidth{\mylength - 15em}
+
+	\color{darkgray}
+	\noindent\begin{tabular}{p{14em} p{1em} p{\@rightColWidth}}
+		\parbox[t]{.45cm}{\faSquare} \headingfont #1 & & #2
+	\end{tabular}
+	\renewcommand{\bfseries}{\mainfont\color{gray}}
+	\vspace{.15em}
 }
 
 
-\newcommand{\circChartEntry}[2]{
-	\begin{figure}[H]
-		\centering
-		\begin{tikzpicture}
-		\coordinate (O) at (0,0);
-		\draw[gray,fill=gray!75,opacity=.5] (O) circle (.7*#2 /3);
-		\draw[gray] (O) circle (.7*1);
-		\draw[gray] (O) circle (.7*2/3);
-		\draw[gray] (O) circle (.7*1/3);
-		\end{tikzpicture}
-		\par #1
-	\end{figure}
+\newcommand{\education}[3]{
+	\def\@tableWidth{\textwidth}
+	\def\@rightColWidth{\textwidth - 15em}
+
+	\color{darkgray}
+	\noindent\begin{tabular}{p{14em} p{1em} p{\@rightColWidth}}
+		\parbox[t]{.45cm}{\faSquare} \headingfont #1 & & \parbox[t]{\@rightColWidth}{#2 \hfill #3}
+	\end{tabular}
+	\renewcommand{\bfseries}{\mainfont\color{gray}}
+    \vspace{-1.1em}
 }
+
+%----------------------------------------------------------------------------------------
+%	PUBLICATIONS SETUP  (BibLaTeX + biber)
+%	Your references live in publications.bib. To emphasise your own name,
+%	annotate your author position there, e.g.  author+an = {1=highlight}.
+%	The two redefinitions below render any "highlight"-annotated name in bold.
+%----------------------------------------------------------------------------------------
+
+\usepackage[backend=biber, style=numeric, sorting=ydnt,
+            maxbibnames=99, giveninits=true,
+            doi=false, isbn=false, url=false]{biblatex}
+\addbibresource{publications.bib}
+\usepackage{fontawesome} % for \faSquare in bibliography
+
+\setlength{\bibitemsep}{0.0em}   % space between publications; use 0pt for tightest
+\setlength{\bibparsep}{0pt}      % space between paragraphs within an entry
+\defbibenvironment{bibliography}
+  {\list{\parbox[t]{.45cm}{\faSquare}}
+     {\setlength{\leftmargin}{\bibhang}%
+      \setlength{\itemindent}{0em}%
+      \setlength{\itemsep}{\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}}}
+  {\endlist}
+  {\item}
+
+% Bold (and darken) the author's own name. We use \fontseries here rather than
+% \textbf because the entry macros locally repurpose \bfseries.
+\newcommand*{\cvnamehighlight}[1]{{\fontseries{b}\selectfont\color{darkgray}#1}}
+\renewcommand*{\mkbibnamegiven}[1]{\ifitemannotation{highlight}{\cvnamehighlight{#1}}{#1}}
+\renewcommand*{\mkbibnamefamily}[1]{\ifitemannotation{highlight}{\cvnamehighlight{#1}}{#1}}
+
+%----------------------------------------------------------------------------------------
+%	Hyperlink Setup
+%---------------------------------------------------------------------------------------
+\RequirePackage{xcolor}
+\definecolor{highlight}{RGB}{0,0,0}
+\RequirePackage{hyperref}
+\hypersetup{colorlinks=true,urlcolor=highlight}

@@ -1,136 +1,123 @@
 %----------------------------------------------------------------------------------------
-% Resume by Hunter Mills
-% Version 1.0 (7/18/2017)
+%	MODERN RESUME / CV TEMPLATE  (single column)
 %
-% MIT license
+%	Based on the resume template by Hunter Mills (v1.0, 2017) - MIT License.
+%	Reworked into a reusable, Overleaf-ready, single-column template with a
+%	BibLaTeX publications section that highlights the author's own name.
 %
-% Compiled using xelatex
-% Custom fonts in fonts folder
+%	HOW TO USE ON OVERLEAF
+%	  1. New Project -> Upload Project, and upload the .zip.
+%	  2. Menu -> Settings -> Compiler: set to "XeLaTeX"  (required).
+%	  3. Menu -> Settings -> TeX Live version: a recent year (for biber).
+%	  4. Make sure this file (main.tex) is the main document, then Recompile.
+%	     (Overleaf runs biber automatically for the publications list.)
+%
+%	COMPILE ORDER (locally):  xelatex -> biber -> xelatex -> xelatex
+%
+%	FONTS: uses TeX Gyre fonts that exist on every Overleaf install, so it
+%	compiles out of the box. See resume.cls to switch to other fonts.
 %----------------------------------------------------------------------------------------
 
-\documentclass[letterpaper]{hunter}
-\usepackage[hmargin=1.5cm, vmargin=1cm]{geometry}
+\documentclass[letterpaper, 11pt]{resume}
+\usepackage[hmargin=1.5cm, vmargin=1.cm]{geometry} % page margins -- tweak to taste
 
 \begin{document}
-	\pagestyle{empty}
-	
-	% Header
-	\firstname{Hunter}
-	\lastname{Mills}
-	\summary{Graduate student at the Institute of Computational and Mathematical Engineering at Stanford University interested in scientific computing, modeling, and visualization}
-	\headersplit{.55\paperwidth} % Spacing between Name and Summary
-	\headerspace{.75cm} % Spacing from top of page
-	\makeHeader
-	
-	% Symbol followed by foreward slash followd by text. Comma separates entries
-	\infoSection{
-		\email/huntermills707@gmail.com,
-		\phone/1-707-799-1896,
-		\linkedin/hunter-mills-874753a6,
-		\location/Sebastopol CA
-	}{2.5em} % Spacing between entries
+\pagestyle{empty}
 
-	% Left Column	
-	\noindent
-	\begin{minipage}[t]{0.33\textwidth} % The left column takes up 33% of the text width of the page
-		\section{Skills}
-		
-		% Title followed by items followed byrankings (rankings are from 1-5)
-		\radarChart{Programming}{C,C++,Julia,\LaTeX,Mathe-\\matica,MatLAB,\quad Python,R}{5,4,4,3,4,2.5,4.5,3}{.29}
-		\vspace{.5em}
-		\radarChart{Parallelization}{Blaze, Cuda, MPI, OpenACC, OpenCL, \quad OpenMP,Pthreads}{3,3.5,4,2,5,3.5,2}{.29}
-		\vspace{.5em}
-		\radarChart{Visualization}{Bokeh, matplotlib,\quad MayaVi, OpenGL, tikz, VTK}{3.5,3.5,2,2,3,2}{.29}
-		
-		\section{Languages}
-		\begin{circChartArray}{3} % Number of Columns
-			\circChartEntry{English}{3} % Entry title followed by ranking (from 1-3)
-			\circChartEntry{Spanish}{1}
-			\circChartEntry{Swedish}{1}
-		\end{circChartArray}
-		
-		\vspace{.3em}
-		\section{Professional Development}
-		% First entry left aligned, second right aligned,
-		\entryItemTwo{edx/ColumbiaX}{2017}
-		\begin{entryList}{1}
-			\item Artificial Intelligence
-			\item Machine Learning
-		\end{entryList}
-		
-	\end{minipage}
-	\hfill % Fill gaps between left and right columns
-	% Right Column
-	\begin{minipage}[t]{0.66\textwidth} % The right column takes up 66% of the text width of the page
-		\section{Education}
-			
-		% First enty let aligned, second left aligned,
-		% third second line left aligned, fourth second line right aligned
-		\entryItem{MS Computational amd Mathematical Engineering}{2015 - 2018}{Stanford University}{Stanford CA}
-		\subline{GPA: 3.34, Departmental Fellowship}
-		\vspace{1.25em}
-		\begin{entryList}{2} % Number of columns
-			\item Numerical Linear Algebra
-			\item Data Mining
-			\item Algorithms
-			\item Convex Optimization
-			\item Scientific Computing
-			\item Stochastic Processes
-		\end{entryList}
-		
-		\entryItem{BS Physics/ BA Mathematics}{2012 - 2014}{Sonoma State University}{Rohnert Park CA}
-		\subline{GPA: 3.89, Distinction in Physics}
-		\begin{entryList}{2}
-			\item Quantum Mechanics
-			\item Statistical Mechanics
-			\item Semiconductor Theory
-			\item Electricity and Magnetism
-			\item Numerical Analysis
-			\item Linear Systems Theory
-		\end{entryList}
-		
-		\entryItem{AS Mathematics}{2007 - 2011}{Santa Rosa Junior College}{Santa Rosa CA}
-		\subline{Doyle Scholoarship}
-		\vspace{-.7em}
-		
-		\section{Experience}
-		\entryItem{Embedded Systems Engineer}{2014 - Present}{Sonoma State University Education and Public Outreach}{Rohnert Park CA}
-		\begin{entryList}{1}
-			\item Designed microcontroller networks for environmental sensing in Logo. 
-			\item Debugged radio based microntroller communications.
-			\item Created SPI, I2C, UART, and PWM comunication libraries in Logo. 
-			\item Built transmission based spectrometer.
-			\item Implemented Si1145 IR/Visible/UV sensor for NDVI measurements.  
-			\item Integrated SD card based memory system for small satellites.
-		\end{entryList}
-		
-		\section{Research}
-		\entryItem{3D Image Reconstruction using Coded Apertures}{2014}{Sonoma State University}{Rohnert Park CA}
-		\begin{entryList}{1}
-			\item Created image reconstruction method Monte Carlo back-projections
-			\item Built cadmium zinc telluride x-ray detector system
-			\item \emphfont{\color{lightgray}Won Best Research at Sonoma State's Science Symposium}
-		\end{entryList}
-		
-		\entryItem{T-LogoQube: 3P Satellite}{2013}{Sonoma State University}{Rohnert Park CA}
-		\begin{entryList}{1}
-			\item Built/designed 15cm x 5cm x 5cm satellite 
-			\item On-board magnetometer and torquing coils 
-			\item Launched November 21, 2013 into a polar, sun synchronous 634km orbit
-		\end{entryList}
-		
-		\entryItem{Digital Control for PHI Auger Specrtrometer}{2012 - 2013}{Sonoma State University}{Rohnert Park CA}
-		\begin{entryList}{1}
-			\item Bypassed analog controls with Arduino based digital control system
-			\item Allowed remote control and more precise control.
-			\item {\emphfont \color{lightgray} Fully funded through Newkirk Student Assistantship}
-		\end{entryList}	
-		
-		\section{Volunteering}
-		\entryItem{Volunteer Firefighter}{2017-Present}{Sebastopol Fire Department}{Sebastopol CA}
-		\begin{entryList}{1}
-			\item First Responder and Basic Life Support
-			\item Fire Suppression/Rescue
-		\end{entryList}	
-	\end{minipage}
+
+%------------------------------------------------------------------
+% HEADER
+%   * name on the left
+%   * contact info as a grid on the right (\info + \infocols)
+%   * summary in the lined bar below (\summary)
+%
+% \info format: \icon/text , comma-separated. Brace any value that
+% contains a comma, e.g. \location/{City, ST}. Icons available:
+% \email \phone \linkedin \github \website \location \skype \dropbox ...
+%------------------------------------------------------------------
+\firstname{Hunter}
+\lastname{Mills}
+\info{
+    \linkedin/\href{https://www.linkedin.com/in/hunter-mills}{hunter-mills},
+    \email/hunter.mills@pm.me,
+    \github/\href{https://www.github.com/huntermills707}{huntermills707},
+    \phone/1-707-799-1896,
+    \website/\href{https://www.volundarhus.com}{volundarhus.com},
+	\location/{Santa Rosa, CA},
+}
+\infocols{2} % columns in the contact grid (2 suits long values like emails;
+             % use more columns only with short values such as handles)
+\summary{Seasoned Data Scientist and Machine Learning Engineer with 8+ years of end-to-end AI product delivery. Proven ability to translate challenges into scalable, production-grade solutions that integrate with medical systems, cloud platforms, and embedded applications. 15+ publications ranging from rare disease prediction, bias mitigation, to deep learning on EKG.}
+\headerspace{.75cm} % space from the top of the page
+\makeHeader
+
+
+%------------------------------------------------------------------
+% EXPERIENCE
+% \entryItem{Position}{Dates}{Company}{Location}
+% Followed by entryList{ncol} for notes 
+%------------------------------------------------------------------
+\section{Experience}
+
+\entryItem{Senior Machine Learning Engineer}{October 2025 - Present}{Visual Thought Labs}{San Francisco, CA}
+\begin{entryList}{1}
+	\item Developed ambient drug OCR in VA operating rooms, deployed on Nvidia Jetson at 77\% lower hardware cost and 73\% lower latency; built the SQL pipeline populating it, and HL7 system issuing results.
+\end{entryList}
+
+\entryItem{Senior Data Scientist}{January 2022 - October 2025}{UCSF}{San Francisco, CA}
+\begin{entryList}{1}
+	\item Built "Drifter," a data-drift monitoring tool used by 80 researchers across six hospitals; surfaced feature, label, and prediction drift that triggered timely ETL updates.
+       \item Directed a nation-wide matched-cohort study on traumatic-brain-injury outcomes, quantifying a 67\% higher risk of malignant brain tumors (HR = 1.67) and publishing findings in JAMA Network Open.
+\end{entryList}
+
+\entryItem{Machine Learning Engineer}{October 2021 - January 2022}{Syntegra}{San Francisco, CA}
+\begin{entryList}{1}
+	\item Created a GenAI synthetic patient data generator that transformed structured EHR records into natural-language sentences, trained BERT models, and regenerated structured data, enabling safe data sharing for rare-case research.
+\end{entryList}
+
+\entryItem{Lead Data Scientist}{December 2020 - October 2021}{LifeBell AI}{Atlanta, GA (remote)}
+\begin{entryList}{1}
+    \item Delivered early sepsis detection system using XGBoost, paired with explainer that highlighted abnormal labs. Deployed at Naval Medical Center San Diego.
+    \item Designed a Dynamic-Time-Warped Gaussian Mixture Model for phenotype discovery, surfacing sepsis-risk subgroups several hours before conventional detection.
+\end{entryList}
+
+\entryItem{Data Scientist}{August 2018 - December 2020}{UCSF}{San Francisco, CA}
+\begin{entryList}{1}
+    \item Developed deep-learning EKG classifier for pulmonary hypertension, achieving an AUC of 0.89 and early-diagnosis capability up to two years before conventional testing.
+	\item Led feasibility analyses that helped secure \$5M+ in research partnerships (J\&J, Roche, Genentech).
+\end{entryList}
+
+\entryItem{Embedded Systems Engineer}{May 2014 - August 2018}{NASA Education \& Public Outreach}{Rohnert Park, CA}
+\begin{entryList}{1}
+	\item Conceived/built/launched EdgeCube 10cm satellite, overseeing sensor integration, data logging, and radio telemetry.
+	\item Developed a STEM curriculum (“Learning By Making”) that raised high-school science scores by 7.8\% versus controls.
+\end{entryList}    
+
+
+%------------------------------------------------------------------
+% EDUCATION
+% \education{Institution}{Title}{Date}
+%------------------------------------------------------------------
+\section{Education}
+\education{Stanford University}{MS in Computational and Mathematical Engineering}{2018}
+\education{Sonoma State University}{BS in Physics and Mathematics}{2014}
+
+
+%------------------------------------------------------------------
+% SKILLS 
+% \skill{group}{skills}
+%------------------------------------------------------------------
+\section{Skills}   
+\skill{Languages}{Python, SQL, Julia, C, C++, JavaScript, TypeScript}
+\skill{ML Frameworks}{PyTorch, TensorFlow, Scikit‑Learn, XGBoost, CVXPY, RAPIDS, JAX, TensorRT, Ollama, HuggingFace, StatsModels, lifelines}
+\skill{Infrastructure \& Compute}{Spark, Spark‑SQL, Hadoop, MPI, OpenMP, CUDA, AWS, GCP, Docker}
+
+
+%------------------------------------------------------------------
+% PUBLICATIONS  (pulled from publications.bib; your name shown in bold)
+%------------------------------------------------------------------
+\section{Publications (Selected)}
+\nocite{*}                       % list every entry in publications.bib
+\printbibliography[heading=none] % the \section above is the heading
+
 \end{document}
