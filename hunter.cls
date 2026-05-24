@@ -234,6 +234,7 @@
 
 \newenvironment{entryList}[1]{
 	\vspace{-1.5em}
+	\emergencystretch=3em\relax
 	\ifnum#1>1
 	\def\@onecol{1}
 	\fi
@@ -317,7 +318,8 @@
      {\setlength{\leftmargin}{\bibhang}%
       \setlength{\itemindent}{0em}%
       \setlength{\itemsep}{\bibitemsep}%
-      \setlength{\parsep}{\bibparsep}}}
+      \setlength{\parsep}{\bibparsep}}%
+   \emergencystretch=2em\relax}
   {\endlist}
   {\item}
 
