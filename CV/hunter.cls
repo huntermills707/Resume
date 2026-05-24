@@ -137,7 +137,7 @@
 	% body always sits beneath it (no overlap, whatever the summary length).
 	% The 1.5cm = header box height (2.5cm) minus the top page margin (1cm);
 	% adjust if you change vmargin.
-	\vspace*{\dimexpr\@headerspace+.5em\relax}
+	\vspace*{\dimexpr\@headerspace-.5em\relax}
 	\par\noindent{\color{darkgray}\rule{\textwidth}{.4pt}}
 	{\fontsize{11pt}{11pt}\bodyfont\color{lightgray}\@summary\par}
 	\vspace{.25em}
@@ -259,7 +259,7 @@
 	\noindent\begin{tabular*}{\@tableWidth}{@{\extracolsep{\fill}}ll}
 		\parbox[t]{\mylength}{} & \parbox[t]{\@rightColWidth}{
 			{#1}
-			\vspace{1.75em}}
+			}
 	\end{tabular*}
 }
 
@@ -285,6 +285,19 @@
 	\vspace{.15em}
 }
 
+
+\newcommand{\issuer}[1]{
+	\setlength{\mylength}{\textwidth-0.45cm}
+
+	\def\@tableWidth{\textwidth}
+	\def\@rightColWidth{\mylength - 15em}
+
+	\color{darkgray}
+  \noindent\parbox[t]{.45cm}{\faSquare} \headingfont{#1}
+  \bodyfont
+	\renewcommand{\bfseries}{\mainfont\color{gray}}
+	\vspace{.25em}
+}
 
 \newcommand{\education}[3]{
 	\def\@tableWidth{\textwidth}
