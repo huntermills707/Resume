@@ -67,22 +67,13 @@
 \newcommand{\emphfont}{\bodyfont\itshape}
 \newcommand{\mainfont}{\bodyfont}
 \defaultfontfeatures{Mapping=tex-text}
-\setmainfont[Mapping=tex-text, Color=000000]{Cormorant Garamond}
+\setmainfont[Mapping=tex-text, Color=000000]{EB Garamond}
 
-% ---- OPTION B: original custom fonts (needs uploaded font files) --------
-%\newfontfamily\bodyfont[]{Portland LDO}
-%\newfontfamily\thinfont[]{Vegur-Light}
-%\newfontfamily\headingfont[]{Vegur-Regular}
-%\newfontfamily\emphfont[]{Portland LDO Italic}
-%\newcommand{\mainfont}{\bodyfont}
-%\defaultfontfeatures{Mapping=tex-text}
-%\setmainfont[Mapping=tex-text, Color=gray]{Portland LDO}
 %-------------------------------------------------------------------------
 
 \definecolor{darkgray}{HTML}{000000}
 \definecolor{gray}{HTML}{000000}
 \definecolor{lightgray}{HTML}{000000}
-
 
 
 %----------------------------------------------------------------------------------------
