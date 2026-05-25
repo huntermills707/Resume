@@ -1,25 +1,26 @@
 %----------------------------------------------------------------------------------------
-%	MODERN RESUME / CV TEMPLATE  (single column)
+%	MODERN CV TEMPLATE  (single column)
 %
 %	Based on the resume template by Hunter Mills (v1.0, 2017) - MIT License.
-%	Reworked into a reusable, Overleaf-ready, single-column template with a
-%	BibLaTeX publications section that highlights the author's own name.
+%	Single-column, Overleaf-ready, with a BibLaTeX publications section
+%	that highlights the author's own name.
 %
 %	HOW TO USE ON OVERLEAF
-%	  1. New Project -> Upload Project, and upload the .zip.
+%	  1. New Project -> Upload Project, and upload the .zip (cv.tex,
+%	     cv.cls, and publications.bib).
 %	  2. Menu -> Settings -> Compiler: set to "XeLaTeX"  (required).
 %	  3. Menu -> Settings -> TeX Live version: a recent year (for biber).
-%	  4. Make sure this file (main.tex) is the main document, then Recompile.
+%	  4. Set cv.tex as the main document, then Recompile.
 %	     (Overleaf runs biber automatically for the publications list.)
 %
 %	COMPILE ORDER (locally):  xelatex -> biber -> xelatex -> xelatex
 %
-%	FONTS: uses TeX Gyre fonts that exist on every Overleaf install, so it
-%	compiles out of the box. See resume.cls to switch to other fonts.
+%	FONTS: EB Garamond (body) + Inter (headings). Both ship with Overleaf.
+%	See cv.cls to switch to other fonts.
 %----------------------------------------------------------------------------------------
 
-\documentclass[letterpaper, 11pt]{hunter}
-\usepackage[hmargin=1.5cm, vmargin=1.cm]{geometry} % page margins -- tweak to taste
+\documentclass[letterpaper, 11pt]{cv}
+\usepackage[hmargin=2cm, vmargin=1.5cm]{geometry} % page margins -- tweak to taste
 
 \begin{document}
 \pagestyle{empty}
@@ -66,8 +67,8 @@
 
 \entryItem{Senior Data Scientist}{January 2022 - October 2025}{UCSF}{San Francisco, CA}
 \begin{entryList}{1}
-	\item Built "Drifter," a data-drift monitoring tool used by 80 researchers across six hospitals; surfaced feature, label, and prediction drift that triggered timely ETL updates.
-       \item Directed a nation-wide matched-cohort study on traumatic-brain-injury outcomes, quantifying a 67\% higher risk of malignant brain tumors (HR = 1.67) and publishing findings in JAMA Network Open.
+	\item Built ``Drifter,'' a data-drift monitoring tool used by 80 researchers across six hospitals; surfaced feature, label, and prediction drift that triggered timely ETL updates.
+	\item Directed a nation-wide matched-cohort study on traumatic-brain-injury outcomes, quantifying a 67\% higher risk of malignant brain tumors (HR = 1.67) and publishing findings in JAMA Network Open.
 \end{entryList}
 
 \entryItem{Machine Learning Engineer}{October 2021 - January 2022}{Syntegra}{San Francisco, CA}
@@ -83,25 +84,61 @@
 
 \entryItem{Data Scientist}{August 2018 - December 2020}{UCSF}{San Francisco, CA}
 \begin{entryList}{1}
-    \item Developed deep-learning EKG classifier for pulmonary hypertension, achieving an AUC of 0.89 and early-diagnosis capability up to two years before conventional testing.
+	\item Developed deep-learning EKG classifier for pulmonary hypertension, achieving an AUC of 0.89 and early-diagnosis capability up to two years before conventional testing.
 	\item Led feasibility analyses that helped secure \$5M+ in research partnerships (J\&J, Roche, Genentech).
 \end{entryList}
 
 \entryItem{Embedded Systems Engineer}{May 2014 - August 2018}{NASA Education \& Public Outreach}{Rohnert Park, CA}
 \begin{entryList}{1}
 	\item Conceived/built/launched EdgeCube 10cm satellite, overseeing sensor integration, data logging, and radio telemetry.
-	\item Developed a STEM curriculum (“Learning By Making”) that raised high-school science scores by 7.8\% versus controls.
-\end{entryList}    
+	\item Developed a STEM curriculum (``Learning By Making'') that raised high-school science scores by 7.8\% versus controls.
+\end{entryList}
 
 
 %------------------------------------------------------------------
 % EDUCATION
-% \education{Institution}{Title}{Date}
+% \entryItem{Title}{Date}{Institution}{Location}
+% \subline{...}  -- optional note under the previous entry
 %------------------------------------------------------------------
 \section{Education}
-\education{Stanford University}{MS in Computational and Mathematical Engineering}{2018}
-\education{Sonoma State University}{BS in Physics and Mathematics}{2014}
+\entryItem{MS in Computational and Mathematical Engineering}{2018}{Stanford University}{Stanford, CA}
+\entryItem{BS Physics and Astronomy, and BA Mathematics}{2014}{Sonoma State University}{Rohnert Park, CA}
+\subline{Graduated with Distinction in Physics, and Magna Cum Laude}
+\entryItem{AS in Mathematics}{2011}{Santa Rosa Junior College}{Santa Rosa, CA}
 
+
+%------------------------------------------------------------------
+% PUBLICATIONS  (pulled from publications.bib; your name shown in bold)
+%------------------------------------------------------------------
+\section{Publications}
+\nocite{*}                       % list every entry in publications.bib
+\printbibliography[heading=none] % the \section above is the heading
+
+
+%------------------------------------------------------------------
+% AWARDS
+%------------------------------------------------------------------
+\section{Awards}
+\entryItem{Hero Award (Tubbs Fire)}{2017}{Stanford University}{}
+\entryItem{Departmental Fellowship}{2015}{Stanford University}{}
+\entryItem{Provost Undergraduate Research Award}{2014}{Sonoma State University}{}
+\entryItem{Future Faces of Physics}{2014}{Society of Physics Students}{}
+\entryItem{Marsh W. White Award}{2014}{Society of Physics Students}{}
+\entryItem{Sigma Pi Sigma Undergraduate Research Award}{2014}{Society of Physics Students}{}
+\entryItem{Newkirk Student Assistantship}{2012}{Sonoma State University}{}
+\entryItem{Doyle Scholarship}{2007}{Santa Rosa Junior College}{}
+
+%------------------------------------------------------------------
+% CERTIFICATIONS 
+% \issuer{org}
+% \entryList
+%------------------------------------------------------------------
+\section{Certifications}
+\issuer{ColumbiaX}
+\begin{entryList}{2}
+    \item CSMM101x: Artificial Intelligence (2017)
+    \item CSMM102x: Machine Learning (2017)
+\end{entryList}
 
 %------------------------------------------------------------------
 % SKILLS 
@@ -112,12 +149,18 @@
 \skill{ML Frameworks}{PyTorch, TensorFlow, Scikit‑Learn, XGBoost, CVXPY, RAPIDS, JAX, TensorRT, Ollama, HuggingFace, StatsModels, lifelines}
 \skill{Infrastructure \& Compute}{Spark, Spark‑SQL, Hadoop, MPI, OpenMP, CUDA, AWS, GCP, Docker}
 
-
 %------------------------------------------------------------------
-% PUBLICATIONS  (pulled from publications.bib; your name shown in bold)
+% VOLUNTEERING
 %------------------------------------------------------------------
-\section{Publications (Selected)}
-\nocite{*}                       % list every entry in publications.bib
-\printbibliography[heading=none] % the \section above is the heading
+\section{Volunteering/Open Science/Open Source}
+\issuer{Open Source}
+\begin{entryList}{2}
+    \item pymargins (Author)
+    \item sklearn-onnx (Contributer)
+    \item NDI (Contributer)
+    \item pillow-jpegxl-plugin (Contributer)
+\end{entryList}
+\entryItem{Data Scientist}{2023 - 2025}{Eclipse MegaMovie Project}{}
+\entryItem{Firefighter}{January 2017 - June 2019}{Sebastopol Fire Department}{}
 
 \end{document}

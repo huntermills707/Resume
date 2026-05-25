@@ -1,51 +1,56 @@
-# Resume
+# Resume & CV
 
-LaTeX resume template (single column, Overleaf-ready). Source: `hunter.tex`; class: `hunter.cls`; output: `hunter.pdf`.
+LaTeX resume and CV templates (single column, Overleaf-ready).
+
+- `Resume/` -- one-page resume. Source: `resume.tex`, class: `resume.cls`, output: `resume.pdf`.
+- `CV/` -- longer CV (publications, awards, certifications, volunteering). Source: `cv.tex`, class: `cv.cls`, output: `cv.pdf`.
+
+Each directory ships its own class file so it can be uploaded to Overleaf as a self-contained zip. The two classes are near-identical; keep them in sync by hand when tweaking shared macros.
 
 ## Compile on Overleaf
 
-1. Zip the project (`hunter.tex`, `hunter.cls`, and a `publications.bib` if you use the publications section).
+1. Zip the contents of `Resume/` (or `CV/`): the `.tex`, the `.cls`, and `publications.bib`.
 2. In Overleaf: **New Project → Upload Project** and upload the zip.
 3. **Menu → Settings → Compiler:** `XeLaTeX` (required for `fontspec`).
 4. **Menu → Settings → TeX Live version:** a recent year (so `biber` is available).
-5. Set `hunter.tex` as the main document and click **Recompile**. Overleaf runs `biber` automatically.
+5. Set the `.tex` file as the main document and click **Recompile**. Overleaf runs `biber` automatically.
 
-The default font setup uses TeX Gyre / EB Garamond / Inter / Cormorant Garamond families that ship with Overleaf, so no font upload is needed.
+EB Garamond and Inter ship with Overleaf, so no font upload is needed.
 
 ## Compile locally
 
-Requires a TeX distribution with XeLaTeX and Biber (TeX Live, MacTeX, or MiKTeX).
+Requires a TeX distribution with XeLaTeX and Biber (TeX Live, MacTeX, or MiKTeX). From inside `Resume/` or `CV/`:
 
 ```sh
-xelatex hunter.tex
-biber   hunter
-xelatex hunter.tex
-xelatex hunter.tex
+latexmk -xelatex <name>.tex   # resume.tex or cv.tex
 ```
 
-Or with `latexmk`:
+Or the manual sequence:
 
 ```sh
-latexmk -xelatex hunter.tex
+xelatex <name>.tex
+biber   <name>
+xelatex <name>.tex
+xelatex <name>.tex
 ```
 
 ### Fonts
 
 The class loads these families via `fontspec`:
 
-- **EB Garamond**
-- **Inter** (Thin and Regular)
+- **EB Garamond** (body)
+- **Inter** (headings; Thin and Regular)
 
 Install them system-wide before compiling.
 
 **Arch / CachyOS:**
 ```sh
-sudo pacman -S tex-gyre-fonts otf-eb-garamond inter-font
+sudo pacman -S otf-eb-garamond inter-font
 ```
 
 **Debian / Ubuntu:**
 ```sh
-sudo apt install fonts-ebgaramond fonts-inter texlive-fonts-extra
+sudo apt install fonts-ebgaramond fonts-inter
 ```
 
 **macOS (Homebrew):**
@@ -57,13 +62,11 @@ brew install --cask font-eb-garamond font-inter
 
 Verify they're visible to XeLaTeX:
 ```sh
-fc-list | grep -iE "garamond|inter|cormorant"
+fc-list | grep -iE "garamond|inter"
 ```
 
-### Switching to the original custom fonts
-
-`hunter.cls` includes an "Option B" block (commented out) that uses Vegur + Portland LDO. To use it, place the font files in a `fonts/` folder and swap the active block in the `FONT CONFIGURATION` section of `hunter.cls`.
+To swap in different fonts, edit the `\newfontfamily` lines in the `FONT CONFIGURATION` section of `resume.cls` / `cv.cls`.
 
 ## Publications
 
-The publications section uses BibLaTeX + Biber. Add entries to `publications.bib`; `\nocite{*}` includes them all.
+The publications section uses BibLaTeX + Biber. Add entries to `publications.bib`; `\nocite{*}` includes them all. To bold your own name in the rendered bibliography, annotate the author position in the `.bib` entry, e.g. `author+an = {1=highlight}`.

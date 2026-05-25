@@ -1,13 +1,9 @@
 %----------------------------------------------------------------------------------------
 %	MODERN RESUME / CV CLASS
 %
-%	Originally "hunter.cls" by Hunter Mills (v1.0, 2017) - MIT License.
-%	Adapted into a reusable, Overleaf-ready template:
-%	  * Renamed the class to the generic name "resume".
-%	  * Replaced the custom (non-Overleaf) fonts with TeX Gyre fonts that ship
-%	    with every TeX Live / Overleaf install (see FONT CONFIGURATION below).
-%	  * Single-column, text-only layout (no radar/circle charts), with a
-%	    \skill{} row command and a BibLaTeX publications section.
+%	Originally by Hunter Mills (v1.0, 2017) - MIT License.
+%	Single-column, text-only layout with a \skill{} row command and a
+%	BibLaTeX publications section.
 %
 %	Compile with XeLaTeX (and biber, for the publications list).
 %----------------------------------------------------------------------------------------
@@ -22,12 +18,11 @@
 \ProcessOptions\relax
 \LoadClass{article}
 
-% Encoding / colours
-\RequirePackage[]{inputenc}
+% Encoding / colours (XeLaTeX handles UTF-8 natively; fontenc kept for safety)
 \RequirePackage[T1]{fontenc}
 \RequirePackage[usenames,dvipsnames]{xcolor}
 
-% Custom Sections
+% Section titles
 \RequirePackage{titlesec}
 
 % TikZ (used to position the header banner)
@@ -35,7 +30,6 @@
 \RequirePackage[none]{hyphenat}
 \RequirePackage{fontawesome}
 \RequirePackage{multicol}
-\RequirePackage{float}
 
 % Math / programming helpers
 \RequirePackage{ifthen}
@@ -47,20 +41,13 @@
 %========================================================================
 %	FONT CONFIGURATION  (compile with XeLaTeX)
 %
-%	Two font setups are provided.
-%
-%	OPTION A (active, default): TeX Gyre fonts. These ship with every
-%	  TeX Live / Overleaf installation, so the template compiles with no
-%	  extra files. Just set the Overleaf compiler to "XeLaTeX".
-%
-%	OPTION B: the original custom fonts (Vegur + Portland LDO). These are
-%	  NOT installed on Overleaf. To use them, upload the .otf/.ttf files
-%	  into a "fonts/" folder in your project, then comment out Option A
-%	  and uncomment Option B.
+%	Uses EB Garamond (body) and Inter (headings). Both ship with Overleaf,
+%	so the template compiles out of the box -- just set the compiler to
+%	"XeLaTeX". To swap in different fonts, change the \newfontfamily lines
+%	below.
 %========================================================================
 \RequirePackage{unicode-math}
 
-% ---- OPTION A: Overleaf-ready fonts (active) ----------------------------
 \newfontfamily\bodyfont{EB Garamond}
 \newfontfamily\thinfont{Inter Thin}
 \newfontfamily\headingfont{Inter Regular}
@@ -68,8 +55,6 @@
 \newcommand{\mainfont}{\bodyfont}
 \defaultfontfeatures{Mapping=tex-text}
 \setmainfont[Mapping=tex-text, Color=000000]{EB Garamond}
-
-%-------------------------------------------------------------------------
 
 \definecolor{darkgray}{HTML}{000000}
 \definecolor{gray}{HTML}{000000}
@@ -95,7 +80,6 @@
 \newcommand*{\summary}[1]{\def\@summary{#1}}
 \newcommand*{\info}[1]{\def\@info{#1}}
 \newcommand*{\infocols}[1]{\def\@infocols{#1}}
-\newcommand*{\headersplit}[1]{\def\@headersplit{#1}}
 \newcommand*{\headerspace}[1]{\def\@headerspace{#1}}
 
 % sensible defaults (so the header still works if a field is omitted)
@@ -135,8 +119,6 @@
 	\end{tikzpicture}
 	% Drop below the header box, then the summary bar in normal flow so the
 	% body always sits beneath it (no overlap, whatever the summary length).
-	% The 1.5cm = header box height (2.5cm) minus the top page margin (1cm);
-	% adjust if you change vmargin.
 	\vspace*{\dimexpr\@headerspace+.5em\relax}
 	\par\noindent{\color{darkgray}\rule{\textwidth}{.4pt}}
 	{\fontsize{11pt}{11pt}\bodyfont\color{lightgray}\@summary\par}
@@ -305,11 +287,10 @@
 %	The two redefinitions below render any "highlight"-annotated name in bold.
 %----------------------------------------------------------------------------------------
 
-\usepackage[backend=biber, style=numeric, sorting=ydnt,
-            maxbibnames=99, giveninits=true,
-            doi=false, isbn=false, url=false]{biblatex}
+\RequirePackage[backend=biber, style=numeric, sorting=ydnt,
+                maxbibnames=99, giveninits=true,
+                doi=false, isbn=false, url=false]{biblatex}
 \addbibresource{publications.bib}
-\usepackage{fontawesome} % for \faSquare in bibliography
 
 \setlength{\bibitemsep}{0.0em}   % space between publications; use 0pt for tightest
 \setlength{\bibparsep}{0pt}      % space between paragraphs within an entry
@@ -331,8 +312,7 @@
 
 %----------------------------------------------------------------------------------------
 %	Hyperlink Setup
-%---------------------------------------------------------------------------------------
-\RequirePackage{xcolor}
+%----------------------------------------------------------------------------------------
 \definecolor{highlight}{RGB}{0,0,0}
 \RequirePackage{hyperref}
 \hypersetup{colorlinks=true,urlcolor=highlight}
