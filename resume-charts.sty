@@ -1,0 +1,345 @@
+%----------------------------------------------------------------------------------------
+%	resume-charts.sty  --  optional visual skill charts for the resume template
+%
+%	These macros were part of the original resume class and were removed when the
+%	layout went single-column / text-only. Drop this file in your project and add
+%
+%	    \usepackage{resume-charts}
+%
+%	to main.tex (after \documentclass) to get them back. Compile with XeLaTeX.
+%
+%	Provides:
+%	  \radarChart{title}{labels}{ratings}{scale}   -- a Kiviat / spider chart
+%	  circChartArray + \circChartEntry             -- circular proficiency dots
+%	  twocol environment                           -- scoped two-column layout
+%	  \bar{label/rating,...}                       -- horizontal bar chart
+%	  \radar{label/rating,...}                     -- spider chart (inline)
+%	  \gantt{label/start/end,...}                  -- timeline chart
+%
+%	The charts are drawn with plain TikZ (no obsolete tkz-kiviat dependency).
+%	When used with resume.cls the heading font and gray colours are inherited;
+%	standalone they fall back to sensible defaults defined below.
+%----------------------------------------------------------------------------------------
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{resume-charts}[2024/01/01 Optional radar/circle skill charts]
+
+\RequirePackage{tikz}
+\RequirePackage{pgffor}
+\RequirePackage{multicol}
+\RequirePackage{float}
+\RequirePackage{xcolor}
+
+% Colours used by the charts (match resume.cls; harmless if already defined)
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{lightgray}{HTML}{999999}
+
+% Font fallbacks: \providecommand only defines these if the class has not already
+% (resume.cls supplies real font families; standalone these expand to nothing).
+\providecommand{\headingfont}{}
+\providecommand{\bodyfont}{}
+
+%----------------------------------------------------------------------------------------
+%	Radar (Kiviat) chart  -- concentric n-sided polygon grid, one axis per label
+%
+% \radarChart{title}{comma,separated,labels}{matching,ratings}{scale}
+%   * ratings run 0-5 and must line up one-for-one with the labels
+%   * scale shrinks/grows the whole chart (~0.29 fits a narrow sidebar column)
+%----------------------------------------------------------------------------------------
+\newcommand{\radarChart}[4]{%
+	\vspace{-1em}
+	\begin{figure}[H]
+		\centering
+		{\fontsize{14pt}{20pt}\headingfont #1}\par
+		% count how many axes (labels) there are
+		\def\@radarN{0}%
+		\foreach \@lbl in {#2}{\xdef\@radarN{\the\numexpr\@radarN+1\relax}}%
+		\pgfmathtruncatemacro{\@radarLast}{\@radarN-1}%
+		\begin{tikzpicture}[scale=#4]
+			\def\@radarR{2.4}%   outer radius (cm, before scaling)
+			\def\@radarLevels{5}% rating scale 0-5 -> 5 grid rings
+			% concentric n-sided polygon grid rings (one vertex per axis)
+			\foreach \@lev in {1,...,5}{%
+				\pgfmathsetmacro{\@ringR}{\@radarR*\@lev/\@radarLevels}%
+				\foreach \@k in {0,...,\@radarLast}{%
+					\pgfmathsetmacro{\@ringang}{90 - 360/\@radarN*\@k}%
+					\coordinate (ring\@k) at (\@ringang:\@ringR cm);%
+				}%
+				\draw[lightgray,line width=0.4pt]
+					(ring0) \foreach \@k in {1,...,\@radarLast}{ -- (ring\@k)} -- cycle;%
+			}
+			% spokes + axis labels
+			\foreach \@lbl [count=\@i from 0] in {#2}{%
+				\pgfmathsetmacro{\@ang}{90 - 360/\@radarN*\@i}%
+				\pgfmathsetmacro{\@lblR}{\@radarR + 0.75}%
+				\draw[lightgray,line width=0.4pt] (0,0) -- (\@ang:\@radarR cm);%
+				\node[font=\small\bodyfont, text=lightgray, inner sep=1.5pt]
+				     at (\@ang:\@lblR cm) {\@lbl};%
+			}
+			% data points (one named coordinate per axis)
+			\foreach \@val [count=\@j from 0] in {#3}{%
+				\pgfmathsetmacro{\@ptang}{90 - 360/\@radarN*\@j}%
+				\pgfmathsetmacro{\@ptrad}{\@radarR*\@val/\@radarLevels}%
+				\coordinate (rdpt\@j) at (\@ptang:\@ptrad cm);%
+			}
+			% data polygon through the points
+			\draw[gray, line width=0.7pt, fill=gray!75, fill opacity=.5]
+				(rdpt0) \foreach \@j in {1,...,\@radarLast}{ -- (rdpt\@j)} -- cycle;%
+		\end{tikzpicture}
+	\end{figure}
+	\vspace{-1em}
+}
+
+%----------------------------------------------------------------------------------------
+%	Circle charts  -- filled-ring proficiency dots
+%
+% circChartArray : environment; argument = number of columns
+% \circChartEntry{name}{rating}  with rating in 0-3
+%----------------------------------------------------------------------------------------
+\newenvironment{circChartArray}[1]{
+	\vspace{-.5em}
+	\ifnum#1>1
+		\def\@onecol{1}
+	\fi
+	\ifdefined\@onecol
+		\begin{multicols}{#1}
+			\else
+			\vspace{-.25em}
+			\fi
+			}{%
+\ifdefined\@onecol
+	\end{multicols}
+\fi
+\vspace{-.75em}
+}
+
+\newcommand{\circChartEntry}[2]{
+	\begin{figure}[H]
+		\centering
+		\begin{tikzpicture}
+		\coordinate (O) at (0,0);
+		\draw[gray,fill=gray!75,opacity=.5] (O) circle (.7*#2 /3);
+		\draw[gray] (O) circle (.7*1);
+		\draw[gray] (O) circle (.7*2/3);
+		\draw[gray] (O) circle (.7*1/3);
+		\end{tikzpicture}
+		\par #1
+	\end{figure}
+}
+
+%----------------------------------------------------------------------------------------
+%	Two-column layout environment (scoped, not global)
+%
+% \begin{twocol}[ratio=0.5]
+%   ... left column ...
+% \columnbreak
+%   ... right column ...
+% \end{twocol}
+%
+% Uses pgfkeys for optional-argument parsing and expl3 dim expressions so that
+% calc (loaded by resume.cls) does not mis-parse the width inside minipage.
+%----------------------------------------------------------------------------------------
+\pgfkeys{/resumecharts/twocolopts/.cd,
+  ratio/.code={\expandafter\def\csname twocol@ratio\endcsname{#1}},
+  .unknown/.code={\expandafter\def\csname twocol@ratio\endcsname{\pgfkeyscurrentname}}
+}
+
+\ExplSyntaxOn
+\newenvironment{twocol}[1][0.5]
+  {
+    \pgfkeys{/resumecharts/twocolopts/.cd,#1}
+    \dim_set:Nn \l_tmpa_dim { \csname twocol@ratio\endcsname \textwidth - 0.5em }
+    \dim_set:Nn \l_tmpb_dim { \textwidth - \csname twocol@ratio\endcsname \textwidth - 0.5em }
+    \noindent\begin{minipage}[t]{\l_tmpa_dim}
+    \def\columnbreak{\unskip\end{minipage}\hfill\begin{minipage}[t]{\l_tmpb_dim}}
+  }
+  {
+    \end{minipage}
+  }
+\ExplSyntaxOff
+
+%----------------------------------------------------------------------------------------
+%	Bar chart -- horizontal bars for label/value pairs
+%
+% \bar{Python/5, SQL/4, Go/3}
+%   * ratings run 0-5; values outside this range are clamped with a warning
+%   * overwrites the standard LaTeX \bar math-accent; the original is saved as \mathbar
+%----------------------------------------------------------------------------------------
+\newcommand{\barchart}[1]{%
+  \begingroup
+  \noindent
+  \begin{tikzpicture}[x=1cm,y=1cm,baseline={([yshift=-1ex]current bounding box.north)}]
+    \foreach \lbl/\val [count=\i] in {#1}{%
+      \pgfmathparse{min(max(\val,0),5)}%
+      \edef\@clamped{\pgfmathresult}%
+      \pgfmathparse{int(\val > 5 ? 1 : (\val < 0 ? 1 : 0))}%
+      \ifnum\pgfmathresult=1\relax
+        \PackageWarning{resume-charts}{Bar rating \val\space for \lbl\space out of 0-5 range; clamped to \@clamped}%
+      \fi
+      \pgfmathsetmacro{\@y}{-\i*0.5}%
+      \pgfmathsetmacro{\@barlen}{\@clamped/5*4}%
+      \node[anchor=west, font=\small\bodyfont, text=darkgray, text width=2.3cm, align=left]
+        at (0,\@y) {\lbl};
+      \fill[lightgray] (2.5,{\@y-0.1}) rectangle (6.5,{\@y+0.1});
+      \fill[gray] (2.5,{\@y-0.1}) rectangle ({2.5+\@barlen},{\@y+0.1});
+    }
+  \end{tikzpicture}%
+  \par
+  \endgroup
+}
+
+%----------------------------------------------------------------------------------------
+%	Dot bar chart -- 5 dots per row; filled for the rating, outlined for remainder
+%
+% \dotbar{Python/5, SQL/4, Go/3.5}
+%   * ratings run 0-5; non-integer halves render the partial dot as a half-fill
+%   * out-of-range values are clamped with a warning (same as \bar)
+%----------------------------------------------------------------------------------------
+\newcommand{\dotbarchart}[1]{%
+  \begingroup
+  \noindent
+  \begin{tikzpicture}[x=1cm,y=1cm,baseline={([yshift=-1ex]current bounding box.north)}]
+    \foreach \lbl/\val [count=\i] in {#1}{%
+      \pgfmathparse{min(max(\val,0),5)}%
+      \edef\@clamped{\pgfmathresult}%
+      \pgfmathparse{int(\val > 5 ? 1 : (\val < 0 ? 1 : 0))}%
+      \ifnum\pgfmathresult=1\relax
+        \PackageWarning{resume-charts}{Dotbar rating \val\space for \lbl\space out of 0-5 range; clamped to \@clamped}%
+      \fi
+      \pgfmathsetmacro{\@y}{-\i*0.5}%
+      \node[anchor=west, font=\small\bodyfont, text=darkgray, text width=2.3cm, align=left]
+        at (0,\@y) {\lbl};
+      \foreach \@d in {1,...,5}{%
+        \pgfmathsetmacro{\@cx}{2.5+(\@d-1)*0.45}%
+        \pgfmathsetmacro{\@diff}{\@clamped-\@d+1}%
+        \pgfmathtruncatemacro{\@state}{\@diff >= 1 ? 2 : (\@diff > 0 ? 1 : 0)}%
+        \ifcase\@state
+          % 0: empty -> outline only
+          \draw[gray, line width=0.5pt] (\@cx,\@y) circle (0.13);%
+        \or
+          % 1: partial -> outline + half fill (left semicircle)
+          \fill[gray] (\@cx,\@y) ++(90:0.13) arc (90:270:0.13) -- cycle;%
+          \draw[gray, line width=0.5pt] (\@cx,\@y) circle (0.13);%
+        \or
+          % 2: full -> filled
+          \fill[gray] (\@cx,\@y) circle (0.13);%
+        \fi
+      }%
+    }
+  \end{tikzpicture}%
+  \par
+  \endgroup
+}
+
+\AtBeginDocument{%
+  \providecommand{\dotbar}{}%
+  \protected\def\dotbar#1{\dotbarchart{#1}}%
+  \let\mathbar\bar
+  \protected\def\bar#1{%
+    \ifmmode
+      \mathbar{#1}%
+    \else
+      \barchart{#1}%
+    \fi
+  }%
+}
+
+%----------------------------------------------------------------------------------------
+%	Radar chart -- inline spider chart from label/value pairs
+%
+% \radar{Python/5, SQL/4, Go/3, Rust/2, TS/4}
+%   * ratings run 0-5; values outside this range are clamped with a warning
+%----------------------------------------------------------------------------------------
+\newcommand{\radar}[1]{%
+  \begingroup
+  \def\@radarN{0}%
+  \foreach \lbl/\val in {#1}{\xdef\@radarN{\the\numexpr\@radarN+1\relax}}%
+  \pgfmathtruncatemacro{\@radarLast}{\@radarN-1}%
+  \noindent\makebox[\linewidth][c]{%
+  \begin{tikzpicture}[scale=0.6, baseline={([yshift=-1ex]current bounding box.north)}]
+    \def\@radarR{2.4}%
+    \def\@radarLevels{5}%
+    % concentric n-sided polygon grid rings
+    \foreach \@lev in {1,...,5}{%
+      \pgfmathsetmacro{\@ringR}{\@radarR*\@lev/\@radarLevels}%
+      \foreach \@k in {0,...,\@radarLast}{%
+        \pgfmathsetmacro{\@ringang}{90 - 360/\@radarN*\@k}%
+        \coordinate (ring\@k) at (\@ringang:\@ringR cm);%
+      }%
+      \draw[lightgray,line width=0.4pt]
+        (ring0) \foreach \@k in {1,...,\@radarLast}{ -- (ring\@k)} -- cycle;%
+    }
+    % spokes + axis labels
+    \foreach \lbl/\val [count=\@i from 0] in {#1}{%
+      \pgfmathsetmacro{\@ang}{90 - 360/\@radarN*\@i}%
+      \pgfmathsetmacro{\@lblR}{\@radarR + 0.75}%
+      \draw[lightgray,line width=0.4pt] (0,0) -- (\@ang:\@radarR cm);%
+      \node[font=\small\bodyfont, text=lightgray, inner sep=1.5pt]
+           at (\@ang:\@lblR cm) {\lbl};%
+    }
+    % data points
+    \foreach \lbl/\val [count=\@j from 0] in {#1}{%
+      \pgfmathparse{min(max(\val,0),5)}%
+      \let\@val=\pgfmathresult
+      \pgfmathparse{int(\val > 5 ? 1 : (\val < 0 ? 1 : 0))}%
+      \ifnum\pgfmathresult=1
+        \PackageWarning{resume-charts}{Radar rating \val\space for \lbl\space out of 0-5 range; clamped to \@val}%
+      \fi
+      \pgfmathsetmacro{\@ptang}{90 - 360/\@radarN*\@j}%
+      \pgfmathsetmacro{\@ptrad}{\@radarR*\@val/\@radarLevels}%
+      \coordinate (rdpt\@j) at (\@ptang:\@ptrad cm);%
+    }
+    % data polygon
+    \draw[gray, line width=0.7pt, fill=gray!75, fill opacity=.5]
+      (rdpt0) \foreach \@j in {1,...,\@radarLast}{ -- (rdpt\@j)} -- cycle;%
+  \end{tikzpicture}%
+  }\par
+  \endgroup
+}
+
+%----------------------------------------------------------------------------------------
+%	Gantt chart -- career/project timeline
+%
+% \gantt{Role A/2019/2022, Role B/2021/2024, Project X/2023/2024}
+%----------------------------------------------------------------------------------------
+\newcommand{\gantt}[1]{%
+  \begingroup
+  \def\gantt@min{9999}%
+  \def\gantt@max{0}%
+  \foreach \lbl/\startyr/\endyr in {#1}{%
+    \pgfmathparse{min(\gantt@min,\startyr)}%
+    \xdef\gantt@min{\pgfmathresult}%
+    \pgfmathparse{max(\gantt@max,\endyr)}%
+    \xdef\gantt@max{\pgfmathresult}%
+  }%
+  \pgfmathsetmacro{\gantt@minP}{\gantt@min-0.5}%
+  \pgfmathsetmacro{\gantt@maxP}{\gantt@max+0.5}%
+  \pgfmathsetmacro{\gantt@span}{\gantt@maxP-\gantt@minP}%
+  \def\gantt@width{8}% in cm; kept unit-less for pgfmath
+  \def\gantt@labelw{2.3}% label column width in cm
+  \noindent
+  \begin{tikzpicture}[x=1cm,y=1cm,baseline={([yshift=-1ex]current bounding box.north)}]
+    % axis (offset right of label column)
+    \draw[lightgray, line width=0.4pt] (\gantt@labelw,0) -- ({\gantt@labelw+\gantt@width},0);
+    % ticks
+    \pgfmathtruncatemacro{\gantt@imin}{ceil(\gantt@minP)}%
+    \pgfmathtruncatemacro{\gantt@imax}{floor(\gantt@maxP)}%
+    \foreach \year in {\gantt@imin,...,\gantt@imax}{%
+      \pgfmathsetmacro{\@x}{\gantt@labelw+(\year-\gantt@minP)/\gantt@span*\gantt@width}%
+      \draw[lightgray, line width=0.4pt] (\@x,0.08) -- (\@x,-0.08);
+      \node[below, font=\tiny\bodyfont, text=lightgray, inner sep=1.5pt] at (\@x,-0.08) {\year};
+    }
+    % bars
+    \foreach \lbl/\startyr/\endyr [count=\i] in {#1}{%
+      \pgfmathsetmacro{\@xstart}{\gantt@labelw+(\startyr-\gantt@minP)/\gantt@span*\gantt@width}%
+      \pgfmathsetmacro{\@xend}{\gantt@labelw+(\endyr-\gantt@minP)/\gantt@span*\gantt@width}%
+      \pgfmathsetmacro{\@y}{-\i*0.5}%
+      \node[anchor=west, font=\small\bodyfont, text=darkgray,
+            text width=\gantt@labelw cm, align=left] at (0,\@y) {\lbl};
+      \fill[gray] (\@xstart,{\@y-0.1}) rectangle (\@xend,{\@y+0.1});
+    }
+  \end{tikzpicture}%
+  \par
+  \endgroup
+}
+
+\endinput
