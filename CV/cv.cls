@@ -149,17 +149,18 @@
     ]
 
 %----------------------------------------------------------------------------------------
-%	List environment
+%	Row macros (structural names, used across sections)
 %
-% entryItem    : 4 arguments (title, dates, sub-title, location) laid out in two
-%                rows, the right-hand item flush to the margin.
-% entryItemTwo : same idea, but only 2 arguments (title + dates).
-% subline      : one left-aligned line, indented to match the entry items.
-% entryList    : bullet list for the details under an entry (\item per bullet);
-%                the argument is the number of columns.
+% \rowFourTwo{a}{b}{c}{d} : 4 items on 2 lines, each line right-justifies its
+%                           second item to the margin. (a hfill b / c hfill d)
+% \rowThreeTwo{a}{b}{c}   : 3 items on 2 lines: "a hfill b" then c alone.
+% \rowThreeOne{a}{b}{c}   : 3 items on 1 line: "a - b" left, c right.
+% \rowTwoOne{a}{b}        : 2 items on 1 line: a left, b right.
+% \subline{...}           : one left-aligned line, indented to match the rows.
+% \entryList{n}           : bullet list (n columns) for the details under a row.
 %----------------------------------------------------------------------------------------
 \setlength{\tabcolsep}{0pt}
-\newcommand{\entryItem}[4]{
+\newcommand{\rowFourTwo}[4]{
 	\setlength{\mylength}{\textwidth-0.45cm}
 
 	\def\@tableWidth{\textwidth}
@@ -178,7 +179,24 @@
 	\renewcommand{\bfseries}{\mainfont\color{gray}}
 }
 
-\newcommand{\entryItemTwo}[2]{
+\newcommand{\rowThreeTwo}[3]{
+	\setlength{\mylength}{\textwidth-0.45cm}
+
+	\def\@tableWidth{\textwidth}
+	\def\@rightColWidth{\mylength}
+
+	\color{darkgray}
+	\noindent\begin{tabular*}{\@tableWidth}{@{\extracolsep{\fill}}ll}
+		\parbox[t]{.45cm}{\faSquare} & \parbox[t]{\@rightColWidth}{%
+			\headingfont{#1}
+			\hfill
+			\bodyfont{#2}\\
+			\bodyfont{#3}}
+	\end{tabular*}
+	\renewcommand{\bfseries}{\mainfont\color{gray}}
+}
+
+\newcommand{\rowTwoOne}[2]{
     \vspace{-.25em}
 	\setlength{\mylength}{\textwidth-0.45cm}
 
@@ -196,7 +214,7 @@
 	\vspace{-.7em}
 }
 
-\newcommand{\entryItemThree}[3]{
+\newcommand{\rowThreeOne}[3]{
     \vspace{-.25em}
 	\setlength{\mylength}{\textwidth-0.45cm}
 
@@ -246,22 +264,29 @@
 }
 
 %----------------------------------------------------------------------------------------
-%	Skill / info row  (text, no charts)
+%	Labeled rows  (fixed-width left column, no inter-column hfill)
 %
-% \skill{Label}{comma, separated, items}
-%    Prints a left-aligned label with the items beside it, e.g.
-%    \skill{Programming}{Python, SQL, C++}
+% \rowTwoFlat{labelw}{label}{content}
+%     Two-item row with the label in a fixed-width left column and the content
+%     flowing in the right column. No hfill -- the right column starts wherever
+%     the label column ends. Example:
+%         \rowTwoFlat{14em}{Languages}{Python, SQL, C++}
+%
+% \rowLabeledHfill{labelw}{label}{left}{right}
+%     Like \rowTwoFlat, but the right column itself splits its two items with
+%     an hfill (useful for institution + date pairs). Example:
+%         \rowLabeledHfill{14em}{Stanford University}{MS CME}{2018}
 %----------------------------------------------------------------------------------------
 
-\newcommand{\skill}[2]{
-	\setlength{\mylength}{\textwidth-0.45cm}
+\newcommand{\rowTwoFlat}[3]{
+	\setlength{\mylength}{\textwidth-0.45cm-#1-1em}
 
 	\def\@tableWidth{\textwidth}
-	\def\@rightColWidth{\mylength - 15em}
+	\def\@rightColWidth{\mylength}
 
 	\color{darkgray}
-	\noindent\begin{tabular}{p{14em} p{1em} p{\@rightColWidth}}
-		\parbox[t]{.45cm}{\faSquare} \headingfont #1 & & #2
+	\noindent\begin{tabular}{p{#1} p{1em} p{\@rightColWidth}}
+		\parbox[t]{.45cm}{\faSquare} \headingfont #2 & & #3
 	\end{tabular}
 	\renewcommand{\bfseries}{\mainfont\color{gray}}
 	\vspace{.15em}
@@ -281,13 +306,15 @@
 	\vspace{.25em}
 }
 
-\newcommand{\education}[3]{
+\newcommand{\rowLabeledHfill}[4]{
+	\setlength{\mylength}{\textwidth-#1-1em}
+
 	\def\@tableWidth{\textwidth}
-	\def\@rightColWidth{\textwidth - 15em}
+	\def\@rightColWidth{\mylength}
 
 	\color{darkgray}
-	\noindent\begin{tabular}{p{14em} p{1em} p{\@rightColWidth}}
-		\parbox[t]{.45cm}{\faSquare} \headingfont #1 & & \parbox[t]{\@rightColWidth}{#2 \hfill #3}
+	\noindent\begin{tabular}{p{#1} p{1em} p{\@rightColWidth}}
+		\parbox[t]{.45cm}{\faSquare} \headingfont #2 & & \parbox[t]{\@rightColWidth}{#3 \hfill #4}
 	\end{tabular}
 	\renewcommand{\bfseries}{\mainfont\color{gray}}
     \vspace{-1.1em}
