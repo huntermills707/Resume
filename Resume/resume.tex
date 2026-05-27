@@ -20,11 +20,14 @@
 %----------------------------------------------------------------------------------------
 
 \documentclass[letterpaper, 11pt]{resume}
-\usepackage[hmargin=1.5cm, vmargin=1.cm]{geometry} % page margins -- tweak to taste
+\usepackage[hmargin=1.5cm, vmargin=1.5cm]{geometry} % page margins -- tweak to taste
+
+\usepackage{lipsum} % dummy text -- feel free to remove.
+
+\addbibresource{publications.bib}
 
 \begin{document}
 \pagestyle{empty}
-
 
 %------------------------------------------------------------------
 % HEADER
@@ -36,21 +39,32 @@
 % contains a comma, e.g. \location/{City, ST}. Icons available:
 % \email \phone \linkedin \github \website \location \skype \dropbox ...
 %------------------------------------------------------------------
-\firstname{Hunter}
-\lastname{Mills}
+\nameFontSize{30pt}
+\firstname{John}
+\lastname{Doe}
+
 \info{
-    \linkedin/\href{https://www.linkedin.com/in/hunter-mills}{hunter-mills},
-    \email/hunter.mills@pm.me,
-    \github/\href{https://www.github.com/huntermills707}{huntermills707},
-    \phone/1-707-799-1896,
-    \website/\href{https://www.volundarhus.com}{volundarhus.com},
-	\location/{Santa Rosa, CA},
+    \linkedin/\href{}{john-doe},
+    \email/john.doe@email.com,
+    \github/\href{}{LeetHaxor},
+    \phone/1-555-123-4567,
+    \website/\href{}{johndoe.dev},
+	\location/{Anywhere, SA},
 }
-\infocols{2} % columns in the contact grid (2 suits long values like emails;
+\infocols{3} % columns in the contact grid (2 suits long values like emails;
              % use more columns only with short values such as handles)
-\summary{Seasoned Data Scientist and Machine Learning Engineer with 8+ years of end-to-end AI product delivery. Proven ability to translate challenges into scalable, production-grade solutions that integrate with medical systems, cloud platforms, and embedded applications. 15+ publications spanning rare disease prediction, bias mitigation, to deep learning on EKG.}
-\headerspace{.75cm} % space from the top of the page
-\makeHeader
+\contactJustify{c} % how the contact items are justified.
+
+\summary{\lipsum[1][1-7]}
+
+\begin{headerRow}{0.3}
+    \nameBlock
+\nextCol
+    \contactBlock
+\end{headerRow}
+\par{\color{darkgray}\rule{\textwidth}{.4pt}}\par % draw the section line
+\summaryBlock
+
 
 
 %------------------------------------------------------------------
@@ -60,59 +74,59 @@
 %------------------------------------------------------------------
 \section{Experience}
 
-\rowFourTwo{Senior Machine Learning Engineer}{October 2025 - Present}{Visual Thought Labs}{San Francisco, CA}
+\rowFourTwo{Position A}{October 2025 - Present}{Company 1}{Anywhere, SA}
 \begin{entryList}{1}
-	\item Developed ambient drug OCR in VA operating rooms, deployed on Nvidia Jetson at 77\% lower hardware cost and 73\% lower latency; built the SQL pipeline populating it, and HL7 system issuing results.
+  \item \lipsum[2][1-2]
+  \item \lipsum[2][3-6]
 \end{entryList}
 
-\rowFourTwo{Senior Data Scientist}{January 2022 - October 2025}{UCSF}{San Francisco, CA}
+
+\rowFourTwo{Position B}{January 2021 - October 2025}{Company 2}{Anywhere, SA}
 \begin{entryList}{1}
-	\item Built ``Drifter,'' a data-drift monitoring tool used by 80 researchers across six hospitals; surfaced feature, label, and prediction drift that triggered timely ETL updates.
-	\item Directed a nation-wide matched-cohort study on traumatic-brain-injury outcomes, quantifying a 67\% higher risk of malignant brain tumors (HR = 1.67) and publishing findings in JAMA Network Open.
+  \item \lipsum[3][1-2]
+  \item \lipsum[3][3-6]
+  \item \lipsum[3][7-9]
 \end{entryList}
 
-\rowFourTwo{Machine Learning Engineer}{October 2021 - January 2022}{Syntegra}{San Francisco, CA}
+\rowFourTwo{Position C}{October 2018 - January 2021}{Company 3}{Anywhere, SA}
 \begin{entryList}{1}
-	\item Created a GenAI synthetic patient data generator that transformed structured EHR records into natural-language sentences, trained BERT models, and regenerated structured data, enabling safe data sharing for rare-case research.
+  \item \lipsum[3][1-4]
+  \item \lipsum[3][4-7]
 \end{entryList}
 
-\rowFourTwo{Lead Data Scientist}{December 2020 - October 2021}{LifeBell AI}{Atlanta, GA (remote)}
+
+%------------------------------------------------------------------
+% Projects 
+% \rowTwoFlat{labelw}{group}{skills}
+%------------------------------------------------------------------
+\section{Projets}
+\rowTwoOne{Project 1}{\href{}{projectsite.com}}
 \begin{entryList}{1}
-    \item Deployed early sepsis detection system using XGBoost, with clinical explainer at Naval Medical Center San Diego.
-    \item Designed a Dynamic-Time-Warped Gaussian Mixture Model for phenotype discovery, surfacing sepsis-risk subgroups several hours before conventional detection.
+  \item \lipsum[4][1-2]
+  \item \lipsum[4][3-6]
+  \item \lipsum[4][7-9]
 \end{entryList}
 
-\rowFourTwo{Data Scientist}{August 2018 - December 2020}{UCSF}{San Francisco, CA}
+\rowTwoOne{Project 2}{\href{}{github.com/project}}
 \begin{entryList}{1}
-	\item Developed deep-learning EKG classifier for pulmonary hypertension, achieving an AUC of 0.89 and early-diagnosis capability up to two years before conventional testing.
-	\item Led feasibility analyses that helped secure \$5M+ in research partnerships (J\&J, Roche, Genentech).
+  \item \lipsum[5][1-2]
+  \item \lipsum[5][3-5]
 \end{entryList}
-
-\rowFourTwo{Embedded Systems Engineer}{May 2014 - August 2018}{NASA Education \& Public Outreach}{Rohnert Park, CA}
-\begin{entryList}{1}
-	\item Conceived/built/launched EdgeCube 10cm satellite, overseeing sensor integration, data logging, and radio telemetry.
-	\item Developed a STEM curriculum (``Learning By Making'') that raised high-school science scores by 7.8\% versus controls.
-\end{entryList}
-
+%------------------------------------------------------------------
+% SKILLS
+% \rowTwoFlat{labelw}{group}{skills}
+%------------------------------------------------------------------
+\section{Skills}
+\rowTwoFlat{10em}{Group A}{Skill One, Skill Two, Skill Three, Skill Four, Skill Five, Skill Six}
+\rowTwoFlat{10em}{Group B}{Skill Eight, Skill Nine, Skill Ten}
 
 %------------------------------------------------------------------
 % EDUCATION
 % \rowLabeledHfill{labelw}{Institution}{Title}{Date}
 %------------------------------------------------------------------
 \section{Education}
-\rowLabeledHfill{14em}{Stanford University}{MS in Computational and Mathematical Engineering}{2018}
-\rowLabeledHfill{14em}{Sonoma State University}{BS in Physics and Mathematics}{2014}
-
-
-%------------------------------------------------------------------
-% SKILLS
-% \rowTwoFlat{labelw}{group}{skills}
-%------------------------------------------------------------------
-\section{Skills}
-\rowTwoFlat{14em}{Languages}{Python, SQL, Julia, C, C++, JavaScript, TypeScript}
-\rowTwoFlat{14em}{ML Frameworks}{PyTorch, TensorFlow, Scikit‑Learn, XGBoost, CVXPY, RAPIDS, JAX, TensorRT, Ollama, HuggingFace, StatsModels, lifelines}
-\rowTwoFlat{14em}{Infrastructure \& Compute}{Spark, Spark‑SQL, Hadoop, MPI, OpenMP, CUDA, AWS, GCP, Docker}
-
+\rowLabeledHfill{10em}{Private University}{MS in Studies}{2018}
+\rowLabeledHfill{10em}{State University}{BS in Studies}{2014}
 
 %------------------------------------------------------------------
 % PUBLICATIONS  (pulled from publications.bib; your name shown in bold)

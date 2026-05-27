@@ -37,6 +37,10 @@
 \RequirePackage{calc}
 \newlength{\mylength}
 \newlength{\@colw}
+\newlength{\@headerLeftW}
+\newlength{\@headerRightW}
+
+\setlength{\parindent}{0pt}
 
 %========================================================================
 %	FONT CONFIGURATION  (compile with XeLaTeX)
@@ -62,17 +66,33 @@
 
 
 %----------------------------------------------------------------------------------------
-%	Header
+%	Header building blocks
 %
-% firstname / lastname : name shown on the left of the header
-% info                 : contact entries shown as a grid on the right of the name.
-%                        Format: \icon/text , separated by commas. A value that
-%                        contains a comma must be braced, e.g. \location/{City, ST}.
-% infocols             : number of columns for the contact grid (default 2). The
-%                        grid uses as many rows as needed to fit all entries.
-% summary              : short blurb shown in the lined bar below the header
-% headerspace          : spacing from the top of the page
-% makeHeader           : draws the whole header (name + info grid + summary bar)
+% Compose the header inline in the .tex file from these primitives:
+%
+%   \begin{headerRow}{0.4}      % left column = 0.4 * textwidth
+%       \nameBlock
+%   \nextCol
+%       \contactBlock           % or \summaryBlock -- your choice
+%   \end{headerRow}
+%   \par\noindent\rule{\textwidth}{.4pt}\par
+%   \summaryBlock               % or \contactBlock -- whichever wasn't above
+%
+% Both columns are bottom-aligned via \minipage[b]: the BASELINE of each
+% column's last line sits on the row's baseline. With \nameBlock's
+% descender strut stripped, that baseline is also the visible bottom of
+% the letters; for \contactBlock / \summaryBlock with non-descender
+% content in their last line, the same holds. The visible bottoms of
+% the two columns therefore line up.
+%
+% Field declarations:
+%   \firstname / \lastname  -- name shown by \nameBlock
+%   \info                   -- entries shown by \contactBlock. Format:
+%                              \icon/text , comma-separated. Brace values
+%                              containing commas, e.g. \location/{City, ST}.
+%   \infocols               -- column count for \contactBlock (default 2)
+%   \summary                -- text shown by \summaryBlock
+%   \nameFontSize           -- font size for \nameBlock (default 48pt)
 %----------------------------------------------------------------------------------------
 
 \newcommand*{\firstname}[1]{\def\@firstname{#1}}
@@ -80,49 +100,75 @@
 \newcommand*{\summary}[1]{\def\@summary{#1}}
 \newcommand*{\info}[1]{\def\@info{#1}}
 \newcommand*{\infocols}[1]{\def\@infocols{#1}}
-\newcommand*{\headerspace}[1]{\def\@headerspace{#1}}
+\newcommand*{\contactJustify}[1]{\def\@contactJustify{#1}}
+\newcommand*{\nameFontSize}[1]{\def\@nameFontSize{#1}}
 
-% sensible defaults (so the header still works if a field is omitted)
+% Sensible defaults so blocks still render if a field is omitted.
 \def\@info{}
 \def\@infocols{2}
+\def\@contactJustify{r}
 \def\@summary{}
+\def\@nameFontSize{48pt}
 
-\newcommand{\makeHeader}[0]{
-	\begin{tikzpicture}[remember picture,overlay]
-		\node [rectangle, anchor=north, minimum width=\textwidth, minimum height=\@headerspace] (top) at (current page.north){};
-		\node [rectangle, anchor=north, minimum width=\textwidth, minimum height=2.5cm] (box) at (top.south){};
-		\node [rectangle, anchor=center, minimum width=.5\textwidth, minimum height=2.75cm] (textAlign) at (box.center){};
+% Strip the font's descender strut so the box's depth is 0 -- i.e. its
+% bottom edge sits on the baseline. Combined with \minipage[b] in
+% headerRow, this makes the visible bottom of "Firstname Lastname" land
+% on the row's baseline (instead of 12pt below it, where the 48pt strut
+% would otherwise reserve space for descenders the name doesn't use).
+\newcommand{\nameBlock}{%
+	\raisebox{0pt}[\height][0pt]{%
+		\fontsize{\@nameFontSize}{0pt}\selectfont\color{darkgray}%
+		{\thinfont \@firstname }{\headingfont \@lastname}%
+	}%
+}
 
-		% Name (left)
-		\node [rectangle, anchor=west] (name) at (box.west) {%
-            \raisebox{1em}{
-			\fontsize{48pt}{48pt}\color{darkgray}%
-			{\thinfont \@firstname }{\headingfont \@lastname}}
-		};
+\newcommand{\contactBlock}{%
+	\setlength{\@colw}{\dimexpr\linewidth/\@infocols\relax}%
+	{\fontsize{10pt}{16pt}\headingfont
+	\foreach \x/\y [count=\@ic] in \@info{%
+		\ifnum\@ic>1\relax
+			\pgfmathtruncatemacro{\@imod}{mod(\@ic-1,\@infocols)}%
+			\ifnum\@imod=0\relax\\\fi
+		\fi
+		\makebox[\@colw][\@contactJustify]{%
+			{\color{darkgray}\raisebox{-.25em}[0pt][0pt]{\fontsize{15pt}{12pt}\selectfont\x}}%
+			\hspace{.45em}{\color{lightgray}\y}}%
+  }\par\vspace{-16pt}}%
+}
 
-		% Contact info grid (right) -- \@infocols columns, as many rows as needed
-		\node [rectangle, anchor=east] (info) at (box.east) {%
-			\setlength{\@colw}{\dimexpr.53\textwidth/\@infocols\relax}%
-			\begin{minipage}{.55\textwidth}
-				\raggedleft\fontsize{10pt}{16pt}\headingfont
-				\foreach \x/\y [count=\@ic] in \@info{%
-					\ifnum\@ic>1\relax
-						\pgfmathtruncatemacro{\@imod}{mod(\@ic-1,\@infocols)}%
-						\ifnum\@imod=0\relax\\\fi
-					\fi
-					\makebox[\@colw][r]{%
-						{\color{darkgray}\raisebox{-.25em}{\fontsize{15pt}{12pt}\selectfont\x}}%
-						\hspace{.45em}{\color{lightgray}\y}}%
-				}%
-			\end{minipage}
-		};
-	\end{tikzpicture}
-	% Drop below the header box, then the summary bar in normal flow so the
-	% body always sits beneath it (no overlap, whatever the summary length).
-	\vspace*{\dimexpr\@headerspace+.5em\relax}
-	\par\noindent{\color{darkgray}\rule{\textwidth}{.4pt}}
-	{\fontsize{11pt}{11pt}\bodyfont\color{lightgray}\@summary\par}
-	\vspace{.25em}
+\newcommand{\summaryBlock}{%
+	{\bodyfont\color{lightgray}\@summary\par}%
+  \vspace{.25em}
+}
+
+% Two-column header row. Argument: the LEFT column's MINIMUM fraction
+% of \textwidth -- if the name's natural width exceeds it, the left
+% column auto-expands so the name never overflows (the right column
+% shrinks to compensate). The RIGHT column always fills the remaining
+% space, less a 1em gap. Both columns are \minipage[b] so the baseline
+% of each column's last line sits on the row's baseline -- i.e. the
+% visible bottoms line up.
+\newenvironment{headerRow}[1]{%
+	\setlength{\@headerLeftW}{#1\textwidth}%
+	\settowidth{\mylength}{%
+		\fontsize{\@nameFontSize}{\@nameFontSize}\selectfont
+		{\thinfont \@firstname }{\headingfont \@lastname}%
+	}%
+	\ifdim\mylength>\@headerLeftW
+		\setlength{\@headerLeftW}{\mylength}%
+	\fi
+	\setlength{\@headerRightW}{\dimexpr\textwidth-\@headerLeftW-1em\relax}%
+	\par\noindent
+	\begin{minipage}[b]{\@headerLeftW}\ignorespaces
+}{%
+	\end{minipage}%
+  \vspace{-.75em}
+}
+
+\newcommand{\nextCol}{%
+	\end{minipage}%
+	\hfill
+	\begin{minipage}[b]{\@headerRightW}\ignorespaces
 }
 
 % Contact-bar icons (FontAwesome)
@@ -197,7 +243,6 @@
 }
 
 \newcommand{\rowTwoOne}[2]{
-    \vspace{-.25em}
 	\setlength{\mylength}{\textwidth-0.45cm}
 
 	\def\@tableWidth{\textwidth}
@@ -215,7 +260,7 @@
 }
 
 \newcommand{\rowThreeOne}[3]{
-    \vspace{-.25em}
+  \vspace{-.25em}
 	\setlength{\mylength}{\textwidth-0.45cm}
 
 	\def\@tableWidth{\textwidth}
@@ -259,7 +304,7 @@
 	\noindent\begin{tabular*}{\@tableWidth}{@{\extracolsep{\fill}}ll}
 		\parbox[t]{\mylength}{} & \parbox[t]{\@rightColWidth}{
 			{#1}
-			\vspace{1.75em}}
+	\vspace{1.75em}}
 	\end{tabular*}
 }
 
@@ -323,7 +368,9 @@
 \setlength{\bibparsep}{0pt}      % space between paragraphs within an entry
 \defbibenvironment{bibliography}
   {\list{\parbox[t]{.45cm}{\faSquare}}
-     {\setlength{\leftmargin}{\bibhang}%
+     {\setlength{\leftmargin}{.45cm}%
+      \setlength{\labelwidth}{.45cm}%
+      \setlength{\labelsep}{0pt}%
       \setlength{\itemindent}{0em}%
       \setlength{\itemsep}{\bibitemsep}%
       \setlength{\parsep}{\bibparsep}}%
