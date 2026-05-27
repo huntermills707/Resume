@@ -19,8 +19,13 @@
 %	See cv.cls to switch to other fonts.
 %----------------------------------------------------------------------------------------
 
-\documentclass[letterpaper, 11pt]{cv}
+\documentclass[letterpaper, 11pt]{resume}
 \usepackage[hmargin=2cm, vmargin=1.5cm]{geometry} % page margins -- tweak to taste
+
+\addbibresource{hunter-cv-publications.bib}
+\definecolor{darkgray}{HTML}{000000}
+\definecolor{gray}{HTML}{222222}
+\definecolor{lightgray}{HTML}{666666}
 
 \begin{document}
 \pagestyle{empty}
@@ -49,8 +54,16 @@
 \infocols{2} % columns in the contact grid (2 suits long values like emails;
              % use more columns only with short values such as handles)
 \summary{Seasoned Data Scientist and Machine Learning Engineer with 8+ years of end-to-end AI product delivery. Proven ability to translate challenges into scalable, production-grade solutions that integrate with medical systems, cloud platforms, and embedded applications. 15+ publications ranging from rare disease prediction, bias mitigation, to deep learning on EKG.}
-\headerspace{.75cm} % space from the top of the page
-\makeHeader
+\nameFontSize{48pt}
+
+\begin{headerRow}{0.4}
+    \nameBlock
+\nextCol
+    \contactBlock
+\end{headerRow}
+\par\noindent{\color{darkgray}\rule{\textwidth}{.4pt}}\par
+\summaryBlock
+\vspace{.25em}
 
 
 %------------------------------------------------------------------
@@ -111,6 +124,7 @@
 % PUBLICATIONS  (pulled from publications.bib; your name shown in bold)
 %------------------------------------------------------------------
 \section{Publications}
+
 \nocite{*}                       % list every entry in publications.bib
 \printbibliography[heading=none] % the \section above is the heading
 
@@ -134,7 +148,7 @@
 % \entryList
 %------------------------------------------------------------------
 \section{Certifications}
-\issuer{ColumbiaX}
+\rowOneOne{ColumbiaX}
 \begin{entryList}{2}
     \item CSMM101x: Artificial Intelligence (2017)
     \item CSMM102x: Machine Learning (2017)
@@ -153,7 +167,7 @@
 % VOLUNTEERING
 %------------------------------------------------------------------
 \section{Volunteering/Open Science/Open Source}
-\issuer{Open Source}
+\rowOneOne{Open Source}
 \begin{entryList}{2}
     \item pymargins (Author)
     \item sklearn-onnx (Contributer)
