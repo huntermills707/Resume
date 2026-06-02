@@ -1,0 +1,125 @@
+%----------------------------------------------------------------------------------------
+%	SAMPLE RICH RESUME  --  demonstrates resume-charts primitives
+%
+%	Compile with XeLaTeX.
+%----------------------------------------------------------------------------------------
+\documentclass[letterpaper, 11pt]{resume}
+\usepackage[hmargin=1.5cm, vmargin=1cm]{geometry}
+
+\usepackage{lipsum}
+
+\addbibresource{publications.bib}
+
+% resume-charts lives in the parent directory
+\makeatletter
+\makeatother
+\usepackage{resume-charts}
+
+\begin{document}
+\pagestyle{empty}
+
+% Header
+\nameFontSize{30pt}
+\firstname{John}
+\lastname{Doe}
+\info{
+    \linkedin/\href{https://www.youtube.com/watch?v=dQw4w9WgXcQ}{john-doe},
+    \email/john.doe@email.com,
+    \github/\href{https://www.youtube.com/watch?v=dQw4w9WgXcQ}{LeetHaxor},
+    \phone/1-555-123-4567,
+    \website/\href{https://www.youtube.com/watch?v=dQw4w9WgXcQ}{johndoe.dev},
+    \location/{Anywhere, SA},
+}
+\infocols{3}
+\contactJustify{c}
+\summary{\lipsum[1][1-7]}
+
+\begin{headerRow}{0.3}
+    \nameBlock
+\nextCol
+    \contactBlock
+\end{headerRow}
+\par\noindent{\color{darkgray}\rule{\textwidth}{.4pt}}\par
+\summaryBlock
+
+% Two asymmetric columns -- sections are confined to their column
+\begin{twocol}[ratio=0.33]
+
+\section{Skills}
+\headingfont{Programming Languages}\newline 
+\radar{Python/5, SQL/4, C++/3, TypeScript/4, Go/3}
+\vspace{.5em}
+\headingfont{DevOps}\newline
+\radar{Kubernetes/3, \quad Teraform/3, Docker/5, CI-CD/4, Grafana\quad/3}
+\vspace{.5em}
+\headingfont{Spoken Languages}\newline
+\dotbarchart{Mandarin/3, English/5, Spanish/4}
+
+\section{Certifications}
+\rowThreeTwo{AWS DevOps}{2018}{AWS}
+\rowThreeTwo{AWS Cloud Practitioner}{2016}{AWS}
+
+\section{Education}
+\rowThreeTwo{Private University}{2018}{MS in Studies}
+\rowThreeTwo{State University}{2016}{BS in Studies}
+
+\columnbreak
+
+%------------------------------------------------------------------
+% EXPERIENCE
+% \rowFourTwo{Position}{Dates}{Company}{Location}
+% Followed by entryList{ncol} for notes 
+%------------------------------------------------------------------
+\section{Experience}
+
+\rowFourTwo{Position A}{October 2025 - Present}{Company 1}{Anywhere, SA}
+\vspace{.5em}
+\begin{entryList}{1}
+  \item \lipsum[2][1-2]
+  \item \lipsum[2][3-6]
+\end{entryList}
+
+
+\rowFourTwo{Position B}{January 2021 - October 2025}{Company 2}{Anywhere, SA}
+\begin{entryList}{1}
+  \item \lipsum[3][1-2]
+  \item \lipsum[3][3-6]
+  \item \lipsum[3][7-9]
+\end{entryList}
+
+\rowFourTwo{Position C}{October 2018 - January 2021}{Company 3}{Anywhere, SA}
+\begin{entryList}{1}
+  \item \lipsum[4][1-4]
+  \item \lipsum[4][5-8]
+\end{entryList}
+
+
+%------------------------------------------------------------------
+% Projects 
+% \rowTwoFlat{labelw}{group}{skills}
+%------------------------------------------------------------------
+\section{Projects}
+\rowTwoOne{Project 1}{\href{}{projectsite.com}}
+\begin{entryList}{1}
+  \item \lipsum[5][1-2]
+  \item \lipsum[5][3-6]
+  \item \lipsum[5][7-9]
+\end{entryList}
+
+\rowTwoOne{Project 2}{\href{}{github.com/project}}
+\begin{entryList}{1}
+  \item \lipsum[6][1-2]
+  \item \lipsum[6][3-5]
+\end{entryList}
+
+\end{twocol}
+
+
+%------------------------------------------------------------------
+% PUBLICATIONS  (pulled from publications.bib; your name shown in bold)
+%------------------------------------------------------------------
+\section{Publications (Selected)}
+\nocite{*}                       % list every entry in publications.bib
+\printbibliography[heading=none] % the \section above is the heading
+
+\end{document}
